@@ -6,17 +6,10 @@ const options = {
     info: {
       title: 'Hotel-Hub API',
       version: '1.0.0',
-      description: 'API Hotel-Hub',
-      contact: {
-        name: 'Daniele Santos',
-        url: 'https://github.com/danieleksantos',
-      },
+      description: 'API para gestão hoteleira',
     },
     servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Servidor Local',
-      },
+      { url: 'http://localhost:3000' },
     ],
     components: {
       securitySchemes: {
@@ -27,8 +20,55 @@ const options = {
         },
       },
     },
+    paths: {
+      '/login': {
+        post: {
+          summary: 'Autentica usuário',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['username', 'password'],
+                  properties: {
+                    username: { type: 'string', example: 'admin' },
+                    password: { type: 'string', example: '123456' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      token: { type: 'string' },
+                      user: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          username: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            401: { description: 'Não autorizado' },
+          },
+        },
+      },
+    },
   },
-  apis: ['./src/routes/*.ts', './src/controllers/*.ts', './src/server.ts'], 
+
+  apis: [], 
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
