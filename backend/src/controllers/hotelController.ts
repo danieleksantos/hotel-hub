@@ -3,19 +3,20 @@ import { pool } from '../database/db';
 
 export const createHotel = async (req: Request, res: Response) => {
   try {
-    const { name, city, address, stars, description, total_rooms } = req.body;
+    const { name, city, address, stars, description, total_rooms, photo_url } = req.body;
 
     if (!name || !city || !address || !stars || !total_rooms) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const query = `
-      INSERT INTO hotels (name, city, address, stars, description, total_rooms)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO hotels (name, city, address, stars, description, total_rooms, photo_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `;
     
-    const values = [name, city, address, stars, description, total_rooms];
+    const values = [name, city, address, stars, description, total_rooms, photo_url || null];
+    
     const result = await pool.query(query, values);
     return res.status(201).json(result.rows[0]);
 

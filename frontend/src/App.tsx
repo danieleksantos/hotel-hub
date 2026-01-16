@@ -5,15 +5,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Login } from './pages/Login';
+import { Layout } from './components/Layout';
+import { Hotels } from './pages/Hotels';     
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { signed } = useAuth();
-
-  if (!signed) {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>; 
+  return signed ? <>{children}</> : <Navigate to="/" />;
 };
 
 function App() {
@@ -27,13 +24,13 @@ function App() {
             path="/dashboard" 
             element={
               <PrivateRoute>
-                <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-                   <h1 className="text-3xl text-primary font-bold">🎉 Login realizado com sucesso!</h1>
-                   <p className="mt-4 text-gray-600">Bem-vindo ao Dashboard.</p>
-                </div>
+                <Layout />
               </PrivateRoute>
             } 
-          />
+          >
+            <Route index element={<Hotels />} />      
+            <Route path="bookings" element={<div className="text-2xl">Tela de Reservas (Em breve)</div>} />
+          </Route>
         </Routes>
         <ToastContainer autoClose={3000} />
       </AuthProvider>
