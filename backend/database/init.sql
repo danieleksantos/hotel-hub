@@ -36,5 +36,5 @@ CREATE TABLE IF NOT EXISTS guests (
 );
 
 INSERT INTO users (username, password_hash) 
-VALUES ('admin', '$2b$10$EpW.S3..HASH_GERADO_DEPOIS') 
+VALUES ('admin', '$2b$10$3euPcmQFCiblsZeEu5s7p.9OVH/CaL4W8/1t7hphsc.j.2l/6.Ode') 
 ON CONFLICT (username) DO NOTHING;
