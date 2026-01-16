@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import { pool } from './database/db';
 
 dotenv.config();
 
@@ -18,4 +19,14 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+app.listen(PORT, async () => {
+  try {
+    const res = await pool.query('SELECT NOW()'); 
+    console.log(`Server running on port ${PORT}`);
+    console.log(`DB Connection Test: ${res.rows[0].now}`);
+  } catch (error) {
+    console.error('Failed to connect to database:', error);
+  }
 });
