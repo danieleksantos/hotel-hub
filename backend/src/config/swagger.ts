@@ -139,7 +139,6 @@ const options = {
               'application/json': {
                 schema: {
                   type: 'object',
-                  // responsible_name OBRIGATÓRIO
                   required: ['hotelId', 'startDate', 'endDate', 'responsible_name'],
                   properties: {
                     hotelId: { type: 'string', format: 'uuid', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
@@ -176,13 +175,12 @@ const options = {
                 },
               },
             },
-            400: { description: 'Datas inválidas ou campos faltando' },
-            404: { description: 'Hotel não encontrado' },
-            409: { description: 'Conflito: Sem quartos disponíveis (Overbooking)' },
+            400: { description: 'Dados inválidos' },
+            409: { description: 'Overbooking' },
           },
         },
         get: {
-          summary: 'Lista TODAS as reservas (Visão do Gestor)',
+          summary: 'Lista TODAS as reservas',
           tags: ['Bookings'],
           security: [{ bearerAuth: [] }],
           responses: {
@@ -195,13 +193,77 @@ const options = {
                     items: {
                       type: 'object',
                       properties: {
-                        id: { type: 'string', example: '9b1deb4d-...' },
-                        hotel_name: { type: 'string', example: 'Hotel Fasano' },
-                        city: { type: 'string', example: 'São Paulo' },
-                        start_date: { type: 'string', example: '2026-12-25' },
-                        end_date: { type: 'string', example: '2026-12-31' },
-                        responsible_name: { type: 'string', example: 'João da Silva' },
-                        created_at: { type: 'string', example: '2026-01-16T18:30:00.000Z' }
+                        id: { type: 'string' },
+                        hotel_name: { type: 'string' },
+                        responsible_name: { type: 'string' },
+                        start_date: { type: 'string' },
+                        end_date: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+
+      // --- HÓSPEDES (GUESTS) ---
+      '/guests': {
+        post: {
+          summary: 'Adiciona um hóspede a uma reserva',
+          tags: ['Guests'],
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['bookingId', 'name', 'document'],
+                  properties: {
+                    bookingId: { type: 'string', format: 'uuid', example: 'ID_DA_RESERVA_AQUI' },
+                    name: { type: 'string', example: 'Maria Oliveira' },
+                    document: { type: 'string', example: '123.456.789-00' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Hóspede adicionado' },
+            400: { description: 'Dados inválidos' },
+            404: { description: 'Reserva não encontrada' },
+          },
+        },
+      },
+      '/bookings/{bookingId}/guests': {
+        get: {
+          summary: 'Lista hóspedes de uma reserva específica',
+          tags: ['Guests'],
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'bookingId',
+              schema: { type: 'string' },
+              required: true,
+              description: 'ID da Reserva',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Lista de hóspedes',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string' },
+                        name: { type: 'string' },
+                        document: { type: 'string' },
                       },
                     },
                   },
