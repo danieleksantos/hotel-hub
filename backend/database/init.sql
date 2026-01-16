@@ -1,0 +1,1 @@
+-- Script de inicialização do banco de dados Hotel Hub
