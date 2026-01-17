@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db-hotel-hub:
     image: postgres:15-alpine
-    container_name: db-hotel-hub 
+    container_name: db-hotel-hub
     ports:
       - "5433:5432"
     environment:
@@ -13,6 +13,42 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d hotel_hub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+ 
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend-hotel-hub
+    ports:
+      - "3000:3000" 
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgres://admin:admin@db-hotel-hub:5432/hotel_hub
+      - JWT_SECRET=sua_chave_secreta_super_segura
+    depends_on:
+      db-hotel-hub:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-hotel-hub
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
     networks:
       - app-network
 

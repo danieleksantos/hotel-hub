@@ -3,19 +3,25 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432'),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-});
+const poolConfig = process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+    }
+    : {
+        user: process.env.POSTGRES_USER || 'admin',
+        host: process.env.POSTGRES_HOST || 'localhost',
+        database: process.env.POSTGRES_DB || 'hotel_hub',
+        password: process.env.POSTGRES_PASSWORD || 'admin',
+        port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    };
+
+export const pool = new Pool(poolConfig);
 
 pool.on('connect', () => {
-  console.log('📦 Database connected successfully');
+    console.log('✅ Connected to Database');
 });
 
 pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
+    console.error('❌ Unexpected error on idle client', err);
+    process.exit(-1);
 });

@@ -1,22 +1,26 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
-const options = {
+export const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Hotel-Hub API',
+      title: 'Hotel Hub API',
       version: '1.0.0',
-      description: 'API para gestão hoteleira (Teste Técnico)',
-      contact: {
-        name: 'Daniele Santos',
+      description: 'Documentação da API do Hotel Hub',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
       },
     },
-    servers: [
-      { url: '/', description: 'Servidor Atual (Mesma Origem)' }, 
-      { url: 'http://localhost:3000', description: 'Servidor Local' },
-    ],
+    security: [{ bearerAuth: [] }],
   },
-  apis: ['./src/docs/*.yaml'], 
-};
-
-export const swaggerSpec = swaggerJsdoc(options);
+  apis: [
+    './src/docs/*.yaml', 
+    './dist/docs/*.yaml'  
+  ],
+});

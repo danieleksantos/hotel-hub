@@ -7,34 +7,36 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Hotéis
 CREATE TABLE IF NOT EXISTS hotels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), 
     name VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,  
+    stars INTEGER CHECK (stars BETWEEN 1 AND 5),
+    description TEXT,
     total_rooms INTEGER NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    photo_url TEXT,                 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Reservas
-CREATE TABLE IF NOT EXISTS reservations (
+CREATE TABLE IF NOT EXISTS bookings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id), 
     responsible_name VARCHAR(255) NOT NULL,
-    check_in TIMESTAMP WITH TIME ZONE NOT NULL,
-    check_out TIMESTAMP WITH TIME ZONE NOT NULL,
+    start_date DATE NOT NULL,          
+    end_date DATE NOT NULL,           
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Hóspedes
 CREATE TABLE IF NOT EXISTS guests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    reservation_id UUID NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
-    full_name VARCHAR(255) NOT NULL,
-    document_id VARCHAR(50) NOT NULL, 
+    booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE, 
+    name VARCHAR(255) NOT NULL,        
+    document VARCHAR(50) NOT NULL,     
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO users (username, password_hash) 
-VALUES ('admin', '$2b$10$3euPcmQFCiblsZeEu5s7p.9OVH/CaL4W8/1t7hphsc.j.2l/6.Ode') 
+VALUES ('admin', '$2b$10$uk2bq3gM5bmxSmxq1/c7n.3sfvz2jWzeWaE4jZ9ASeAN8oM74tiT6') 
 ON CONFLICT (username) DO NOTHING;
