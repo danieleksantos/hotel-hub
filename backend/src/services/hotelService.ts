@@ -31,4 +31,27 @@ export class HotelService {
     const result = await pool.query('SELECT * FROM hotels ORDER BY created_at DESC');
     return result.rows;
   }
+
+
+  async updateHotel(id: string, data: CreateHotelDTO) {
+    const { name, city, address, stars, description, total_rooms, photo_url } = data;
+
+    const query = `
+      UPDATE hotels 
+      SET name = $1, city = $2, address = $3, stars = $4, description = $5, total_rooms = $6, photo_url = $7
+      WHERE id = $8
+      RETURNING *
+    `;
+    
+    const values = [name, city, address, stars, description, total_rooms, photo_url || null, id];
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  async deleteHotel(id: string): Promise<boolean> {
+    const result = await pool.query('DELETE FROM hotels WHERE id = $1 RETURNING id', [id]);
+    
+    return (result.rowCount ?? 0) > 0;
+  }
 }

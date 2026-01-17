@@ -14,3 +14,9 @@ export const createHotelSchema = z.object({
       .or(z.literal('')),
   }),
 });
+
+export const hotelIdSchema = z.object({
+  params: z.object({
+    id: z.uuid('ID do hotel inválido'),
+  }),
+});

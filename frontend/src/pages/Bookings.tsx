@@ -139,13 +139,12 @@ export const Bookings: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button 
+                                        <Button 
                                             onClick={() => handleManage(booking)}
-                                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm hover:bg-gray-50 hover:text-primary hover:border-primary/30 transition-all cursor-pointer"
                                         >
                                             <Settings2 className="w-4 h-4" />
                                             Gerenciar
-                                        </button>
+                                        </Button>
                                     </td>
                                 </tr>
                             );

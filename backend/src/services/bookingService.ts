@@ -1,17 +1,17 @@
 import { pool } from '../database/db';
 
 interface CreateBookingDTO {
-  userId: string;
-  hotelId: string;
+  user_id: string;   
+  hotel_id: string;  
   start_date: string;
   end_date: string;
   responsible_name: string;
 }
 
 export class BookingService {
-  async createBooking({ userId, hotelId, start_date, end_date, responsible_name }: CreateBookingDTO) {
+  async createBooking({ user_id, hotel_id, start_date, end_date, responsible_name }: CreateBookingDTO) {
     
-    const hotelCheck = await pool.query('SELECT total_rooms FROM hotels WHERE id = $1', [hotelId]);
+    const hotelCheck = await pool.query('SELECT total_rooms FROM hotels WHERE id = $1', [hotel_id]);
     if (hotelCheck.rows.length === 0) {
       throw new Error('HOTEL_NOT_FOUND');
     }
@@ -22,7 +22,7 @@ export class BookingService {
       `SELECT COUNT(*) FROM bookings 
        WHERE hotel_id = $1 
        AND (start_date < $3 AND end_date > $2)`,
-      [hotelId, start_date, end_date]
+      [hotel_id, start_date, end_date]
     );
 
     const activeBookings = parseInt(availabilityCheck.rows[0].count);
@@ -36,7 +36,7 @@ export class BookingService {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
-    const result = await pool.query(insertQuery, [userId, hotelId, start_date, end_date, responsible_name]);
+    const result = await pool.query(insertQuery, [user_id, hotel_id, start_date, end_date, responsible_name]);
     
     return result.rows[0];
   }
@@ -63,4 +63,21 @@ export class BookingService {
   const result = await pool.query(query);
   return result.rows;
 }
+
+async updateBooking(id: string, { start_date, end_date, responsible_name }: Partial<CreateBookingDTO>) {
+    const query = `
+      UPDATE bookings 
+      SET start_date = $1, end_date = $2, responsible_name = $3 
+      WHERE id = $4 
+      RETURNING *
+    `;
+    const result = await pool.query(query, [start_date, end_date, responsible_name, id]);
+    return result.rows[0];
+  }
+
+  async deleteBooking(id: string): Promise<boolean> {
+    const result = await pool.query('DELETE FROM bookings WHERE id = $1 RETURNING id', [id]);
+    return (result.rowCount ?? 0) > 0;
+  }
 }
+

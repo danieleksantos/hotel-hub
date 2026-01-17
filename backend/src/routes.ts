@@ -3,12 +3,12 @@ import { validate } from './middlewares/validateResource';
 import { authMiddleware } from './middlewares/authMiddleware';
 
 import { loginSchema } from './schemas/auth.schema';
-import { createHotelSchema } from './schemas/hotel.schema';
+import { createHotelSchema, hotelIdSchema } from './schemas/hotel.schema';
 import { createBookingSchema } from './schemas/booking.schema';
 import { createGuestSchema, getGuestSchema } from './schemas/guest.schema';
 
 import { login } from './controllers/authController';
-import { createHotel, listHotels } from './controllers/hotelController';
+import { createHotel, listHotels, updateHotel, deleteHotel } from './controllers/hotelController';
 import { createBooking, listAllBookings } from './controllers/bookingController';
 import { addGuest, listGuestsByBooking } from './controllers/guestController';
 
@@ -18,6 +18,8 @@ router.post('/login', validate(loginSchema), login);
 
 router.post('/hotels', authMiddleware, validate(createHotelSchema), createHotel);
 router.get('/hotels', authMiddleware, listHotels);
+router.put('/hotels/:id', authMiddleware, validate(hotelIdSchema), validate(createHotelSchema), updateHotel);
+router.delete('/hotels/:id', authMiddleware, validate(hotelIdSchema), deleteHotel);
 
 router.post('/bookings', authMiddleware, validate(createBookingSchema), createBooking);
 router.get('/bookings', authMiddleware, listAllBookings);

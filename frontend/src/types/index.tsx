@@ -42,3 +42,5 @@ export interface Guest {
     document: string;
     created_at?: string;
 }
+
+export type HotelFormData = Omit<Hotel, 'id' | 'created_at'>;

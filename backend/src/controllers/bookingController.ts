@@ -7,16 +7,16 @@ export const createBooking: RequestHandler = async (req, res, next): Promise<voi
   try {
     const { hotel_id, start_date, end_date, responsible_name } = req.body;
     
-    const userId = req.user?.id; 
+    const user_id = req.user?.id; 
 
-    if (!userId) {
+    if (!user_id) {
       res.status(401).json({ error: 'Usuário não autenticado' });
       return;
     }
 
     const booking = await bookingService.createBooking({
-      userId,
-      hotelId: hotel_id, 
+      user_id,
+      hotel_id: hotel_id, 
       start_date: start_date,
       end_date: end_date,
       responsible_name: responsible_name
