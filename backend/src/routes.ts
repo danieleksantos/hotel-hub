@@ -23,6 +23,6 @@ router.post('/bookings', authMiddleware, validate(createBookingSchema), createBo
 router.get('/bookings', authMiddleware, listAllBookings);
 
 router.post('/guests', authMiddleware, validate(createGuestSchema), addGuest);
-router.get('/bookings/:bookingId/guests', authMiddleware, validate(getGuestSchema), listGuestsByBooking);
+router.get('/bookings/:booking_id/guests', authMiddleware, validate(getGuestSchema), listGuestsByBooking);
 
 export default router;

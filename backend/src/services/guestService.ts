@@ -1,13 +1,13 @@
 import { pool } from '../database/db';
 
 interface CreateGuestDTO {
-  bookingId: string;
+  booking_id: string;
   name: string;
   document: string;
 }
 
 export class GuestService {
-  async createGuest({ bookingId, name, document }: CreateGuestDTO) {
+  async createGuest({ booking_id, name, document }: CreateGuestDTO) {
     try {
       const query = `
         INSERT INTO guests (booking_id, name, document)
@@ -15,7 +15,7 @@ export class GuestService {
         RETURNING *
       `;
       
-      const result = await pool.query(query, [bookingId, name, document]);
+      const result = await pool.query(query, [booking_id, name, document]);
       return result.rows[0];
 
     } catch (error: any) {
@@ -26,9 +26,9 @@ export class GuestService {
     }
   }
 
-  async listByBookingId(bookingId: string) {
+  async listByBookingId(booking_id: string) {
     const query = `SELECT * FROM guests WHERE booking_id = $1 ORDER BY name ASC`;
-    const result = await pool.query(query, [bookingId]);
+    const result = await pool.query(query, [booking_id]);
     return result.rows;
   }
 }

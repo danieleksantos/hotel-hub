@@ -6,7 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Login } from './pages/Login';
 import { Layout } from './components/Layout';
-import { Hotels } from './pages/Hotels';     
+import { Hotels } from './pages/Hotels';      
+import { Bookings } from './pages/Bookings'; 
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { signed } = useAuth();
@@ -28,8 +29,8 @@ function App() {
               </PrivateRoute>
             } 
           >
-            <Route index element={<Hotels />} />      
-            <Route path="bookings" element={<div className="text-2xl">Tela de Reservas (Em breve)</div>} />
+            <Route index element={<Hotels />} />       
+            <Route path="bookings" element={<Bookings />} />
           </Route>
         </Routes>
         <ToastContainer autoClose={3000} />

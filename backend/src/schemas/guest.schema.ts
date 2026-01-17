@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const createGuestSchema = z.object({
   body: z.object({
-    bookingId: z.uuid({ message: 'ID da reserva inválido (deve ser UUID)' }),
+    booking_id: z.uuid({ message: 'ID da reserva inválido (deve ser UUID)' }),
     name: z.string().min(2, 'Nome do hóspede é obrigatório'),
     document: z.string().min(5, 'Documento é obrigatório'),
   }),
@@ -10,6 +10,6 @@ export const createGuestSchema = z.object({
 
 export const getGuestSchema = z.object({
   params: z.object({
-    bookingId: z.uuid({ message: 'ID da reserva inválido na URL' }),
+    booking_id: z.uuid({ message: 'ID da reserva inválido na URL' }),
   }),
 });

@@ -1,21 +1,22 @@
 paths:
   /hotels:
     get:
-      summary: Lista hotéis
+      summary: Lista todos os hotéis
       tags: [Hotels]
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Lista retornada
+          description: Lista retornada com sucesso
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Hotel'
+    
     post:
-      summary: Cria hotel
+      summary: Criar novo hotel
       tags: [Hotels]
       security:
         - bearerAuth: []
@@ -29,18 +30,52 @@ paths:
               properties:
                 name:
                   type: string
+                  example: "Copacabana Palace"
                 city:
                   type: string
+                  example: "Rio de Janeiro"
                 address:
                   type: string
+                  example: "Av. Atlântica, 1702"
                 stars:
                   type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 5
                 total_rooms:
                   type: integer
+                  description: "Número total de quartos (snake_case)"
+                  example: 239
                 description:
                   type: string
+                  example: "Hotel icônico frente ao mar."
                 photo_url:
                   type: string
+                  example: "https://example.com/foto.jpg"
       responses:
         201:
-          description: Criado com sucesso
+          description: Hotel criado com sucesso
+        400:
+          description: Dados inválidos
+
+  /hotels/{id}:
+    delete:
+      summary: Excluir um hotel
+      tags: [Hotels]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: UUID do hotel a ser excluído
+      responses:
+        204:
+          description: Deletado com sucesso (Sem conteúdo)
+        404:
+          description: Hotel não encontrado
+        500:
+          description: Erro interno (talvez existam reservas vinculadas)

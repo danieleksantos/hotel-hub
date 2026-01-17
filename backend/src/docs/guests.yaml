@@ -1,7 +1,8 @@
-paths:
+# --- ROTAS DE GUESTS ---
   /guests:
     post:
-      summary: Adiciona hóspede
+      summary: Adiciona hóspede a uma reserva
+      description: Vincula um novo hóspede a uma reserva existente.
       tags: [Guests]
       security:
         - bearerAuth: []
@@ -11,22 +12,29 @@ paths:
           application/json:
             schema:
               type: object
-              required: [bookingId, name, document]
+              required: [booking_id, name, document]
               properties:
-                bookingId:
+                booking_id:
                   type: string
                   format: uuid
+                  description: "ID da Reserva vinculada"
                 name:
                   type: string
+                  description: "Nome completo do hóspede"
+                  example: "Maria Souza"
                 document:
                   type: string
+                  description: "CPF, RG ou Passaporte"
+                  example: "123.456.789-00"
       responses:
         201:
-          description: Adicionado
+          description: Hóspede adicionado com sucesso
+        400:
+          description: Dados inválidos
         404:
           description: Reserva não encontrada
 
-  /bookings/{bookingId}/guests:
+  /bookings/{booking_id}/guests:
     get:
       summary: Lista hóspedes da reserva
       tags: [Guests]
@@ -34,14 +42,15 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: bookingId
+          name: booking_id
           schema:
             type: string
+            format: uuid
           required: true
-          description: ID da Reserva
+          description: ID da Reserva para buscar os acompanhantes
       responses:
         200:
-          description: Lista retornada
+          description: Lista retornada com sucesso
           content:
             application/json:
               schema:

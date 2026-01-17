@@ -5,7 +5,8 @@ const bookingService = new BookingService();
 
 export const createBooking: RequestHandler = async (req, res, next): Promise<void> => {
   try {
-    const { hotelId, startDate, endDate, responsible_name } = req.body;
+    const { hotel_id, start_date, end_date, responsible_name } = req.body;
+    
     const userId = req.user?.id; 
 
     if (!userId) {
@@ -15,10 +16,10 @@ export const createBooking: RequestHandler = async (req, res, next): Promise<voi
 
     const booking = await bookingService.createBooking({
       userId,
-      hotelId,
-      startDate,
-      endDate,
-      responsibleName: responsible_name
+      hotelId: hotel_id, 
+      start_date: start_date,
+      end_date: end_date,
+      responsible_name: responsible_name
     });
 
     res.status(201).json({
@@ -35,7 +36,6 @@ export const createBooking: RequestHandler = async (req, res, next): Promise<voi
         res.status(409).json({ error: 'Sem quartos disponíveis para este período' });
         return;
     }
-
     next(error);
   }
 };

@@ -4,18 +4,8 @@ import { Button } from '../components/Button';
 import { CreateHotelModal } from '../components/CreateHotelModal';
 import { Plus, MapPin, Star, Trash2, Edit, Building2, BedDouble } from 'lucide-react';
 import { toast } from 'react-toastify';
+import type { Hotel } from '../types';
 
-interface Hotel {
-  id: string;
-  name: string;
-  city: string;
-  total_rooms: number;
-  photo_url?: string | null;
-  state?: string;
-  stars?: number;
-  address?: string; 
-  description?: string; 
-}
 
 const DEFAULT_IMAGE = "https://placehold.co/600x400/0f5132/FFF?text=Hotel+Hub&font=montserrat";
 

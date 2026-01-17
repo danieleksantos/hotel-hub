@@ -18,32 +18,73 @@ components:
         city:
           type: string
           example: São Paulo
+        address:
+          type: string
+          example: Rua Vitório, 123, Jardins
         stars:
           type: integer
           example: 5
         total_rooms:
           type: integer
           example: 50
-    
+        description:
+          type: string
+          example: "Hotel de luxo com vista panorâmica."
+        photo_url:
+          type: string
+          example: "https://example.com/foto.jpg"
+        created_at:
+          type: string
+          format: date-time
+
     Booking:
       type: object
       properties:
         id:
           type: string
           format: uuid
+        hotel_id:
+          type: string
+          format: uuid
+          description: "ID do hotel (Obrigatório no POST)"
+        responsible_name:
+          type: string
+          example: "João da Silva"
         start_date:
           type: string
           format: date
+          example: "2026-02-20"
         end_date:
           type: string
           format: date
-        responsible_name:
+          example: "2026-02-25"
+        
+        hotel_name:
           type: string
+          description: "Nome do hotel (apenas leitura)"
+        hotel_photo:
+          type: string
+          description: "Foto do hotel (apenas leitura)"
+        city:
+          type: string
+          description: "Cidade do hotel (apenas leitura)"
+        guest_count:
+          type: integer
+          description: "Total de hóspedes adicionais (apenas leitura)"
+        created_by:
+          type: string
+          description: "Username de quem criou a reserva (apenas leitura)"
+        created_at:
+          type: string
+          format: date-time
 
     Guest:
       type: object
       properties:
         id:
+          type: string
+          format: uuid
+        booking_id:
           type: string
           format: uuid
         name:
@@ -52,3 +93,6 @@ components:
         document:
           type: string
           example: 123.456.789-00
+        created_at:
+          type: string
+          format: date-time

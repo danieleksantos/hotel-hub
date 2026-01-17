@@ -3,18 +3,8 @@ import { X, Save, Building2 } from 'lucide-react';
 import api from '../services/api';
 import { Button } from './Button';
 import { toast } from 'react-toastify';
+import type { Hotel } from '../types';
 
-export interface Hotel {
-  id: string;
-  name: string;
-  city: string;
-  total_rooms: number;
-  photo_url?: string | null;
-  address?: string;
-  stars?: number;
-  description?: string;
-  created_at?: string;
-}
 
 interface CreateHotelModalProps {
   isOpen: boolean;
