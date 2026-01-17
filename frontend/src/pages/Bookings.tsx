@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Button } from '../components/Button';
+import { SearchBar, type SearchType } from '../components/SearchBar';
 import { CreateBookingModal } from '../components/CreateBookingModal';
-import { ManageBookingModal } from '../components/ManageBookingModal'; // <--- Import Novo
-import { Plus, Search, Users, Settings2 } from 'lucide-react';
+import { ManageBookingModal } from '../components/ManageBookingModal';
+import { Plus, Users, Settings2, MapPin, CreditCard, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import type { Booking } from '../types';
 
 export const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchType, setSearchType] = useState<SearchType>('all');
   
-  // Controle dos Modais
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   async function loadBookings() {
+    setLoading(true);
     try {
-      const response = await api.get('/bookings');
+      const response = await api.get<Booking[]>('/bookings');
       setBookings(response.data);
     } catch (error) {
-      console.error(error);
+      console.error('Error loading bookings:', error);
       toast.error('Erro ao carregar reservas.');
     } finally {
       setLoading(false);
@@ -49,16 +52,28 @@ export const Bookings: React.FC = () => {
     return diff > 0 ? diff : 1;
   };
 
+  // Lógica de Filtro Simplificada e Limpa
+  const filteredBookings = bookings.filter(b => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+
+    const matchHotel = b.hotel_name.toLowerCase().includes(term);
+    const matchGuest = b.responsible_name.toLowerCase().includes(term);
+
+    if (searchType === 'hotel') return matchHotel;
+    if (searchType === 'guest') return matchGuest;
+    
+    return matchHotel || matchGuest;
+  });
+
   return (
-    <div>
-      {/* Modal de Criação (Simples) */}
+    <div className="p-4 md:p-0">
       <CreateBookingModal 
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={loadBookings}
       />
 
-      {/* Modal de Gerenciamento (Dashboard) */}
       <ManageBookingModal
         isOpen={isManageModalOpen}
         onClose={() => setIsManageModalOpen(false)}
@@ -66,92 +81,148 @@ export const Bookings: React.FC = () => {
         booking={selectedBooking}
       />
 
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Reservas</h1>
-          <p className="text-gray-500 mt-1">Gerencie check-ins, check-outs e ocupação</p>
+          <p className="text-gray-500 mt-1 text-sm md:text-base">Listagem e gerenciamento de estadias</p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
+        <Button onClick={() => setIsCreateModalOpen(true)} className="w-full md:w-auto cursor-pointer">
           <Plus className="w-5 h-5" />
           Nova Reserva
         </Button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* Header Busca */}
-        <div className="p-4 border-b border-gray-200 bg-gray-50 flex gap-4">
-            <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                <input 
-                    type="text" 
-                    placeholder="Buscar..." 
-                    className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-primary"
-                />
-            </div>
-        </div>
+        {/* BUSCA SEPARADA */}
+        <SearchBar 
+          value={searchTerm} 
+          onChange={setSearchTerm}
+          searchType={searchType}
+          onTypeChange={setSearchType}
+          placeholder={`Buscar ${searchType === 'all' ? 'reserva' : searchType === 'hotel' ? 'por hotel' : 'por responsável'}...`}
+          count={filteredBookings.length}
+        />
         
-        {!loading && bookings.length > 0 && (
-            <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-gray-500 font-bold uppercase tracking-wider text-xs">
-                        <tr>
-                            <th className="px-6 py-4">Hotel</th>
-                            <th className="px-6 py-4">Responsável</th>
-                            <th className="px-6 py-4">Período</th>
-                            <th className="px-6 py-4 text-center">Ocupação</th>
-                            <th className="px-6 py-4 text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {bookings.map((booking) => {
-                            const totalGuests = 1 + (booking.guest_count || 0);
-
-                            return (
-                                <tr key={booking.id} className="hover:bg-gray-50 transition-colors group">
+        {loading ? (
+          <div className="p-20 flex flex-col items-center justify-center gap-4 text-gray-400">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="text-sm italic font-medium uppercase tracking-widest">Carregando...</p>
+          </div>
+        ) : filteredBookings.length > 0 ? (
+            <div>
+                {/* DESKTOP TABLE */}
+                <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 text-gray-400 font-black uppercase tracking-widest text-[10px] border-b border-gray-100">
+                            <tr>
+                                <th className="px-6 py-4">Hotel / Cidade</th>
+                                <th className="px-6 py-4">Responsável</th>
+                                <th className="px-6 py-4">Período</th>
+                                <th className="px-6 py-4 text-center">Pessoas</th>
+                                <th className="px-6 py-4 text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 font-medium">
+                            {filteredBookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-gray-50/50 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden shrink-0 shadow-sm">
+                                            <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
                                                 {booking.hotel_photo ? (
                                                     <img src={booking.hotel_photo} className="w-full h-full object-cover" alt="" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold">H</div>
+                                                    <CreditCard className="w-5 h-5 text-gray-200" />
                                                 )}
                                             </div>
                                             <div>
                                                 <p className="font-bold text-gray-900">{booking.hotel_name}</p>
-                                                <p className="text-xs text-gray-500">{booking.city}</p>
+                                                <div className="flex items-center text-[11px] text-gray-400 font-bold uppercase tracking-tighter">
+                                                  <MapPin className="w-3 h-3 mr-1" /> {booking.city}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-700 font-medium">{booking.responsible_name}</td>
+                                    <td className="px-6 py-4 text-gray-700 font-bold uppercase text-xs tracking-tight">
+                                      {booking.responsible_name}
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="text-gray-900 font-medium">{formatDate(booking.start_date)} - {formatDate(booking.end_date)}</span>
-                                            <span className="text-xs text-gray-500">{getDays(booking.start_date, booking.end_date)} diárias</span>
+                                            <span className="text-gray-900 font-bold text-xs">{formatDate(booking.start_date)} - {formatDate(booking.end_date)}</span>
+                                            <span className="text-[10px] font-black uppercase text-primary/60">{getDays(booking.start_date, booking.end_date)} noites</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <div className="flex items-center justify-center gap-2">
-                                            <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-blue-100">
-                                                <Users className="w-3 h-3" />
-                                                {totalGuests}
-                                            </div>
+                                        <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 border border-blue-100">
+                                            <Users className="w-3 h-3" />
+                                            {1 + (booking.guest_count || 0)}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <Button 
-                                            onClick={() => handleManage(booking)}
-                                        >
+                                        <Button onClick={() => handleManage(booking)} className="cursor-pointer scale-90 origin-right active:scale-75">
                                             <Settings2 className="w-4 h-4" />
                                             Gerenciar
                                         </Button>
                                     </td>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* MOBILE CARDS */}
+                <div className="md:hidden divide-y divide-gray-100">
+                    {filteredBookings.map((booking) => (
+                        <div key={booking.id} className="p-4 flex flex-col gap-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex gap-3">
+                                    <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center">
+                                        {booking.hotel_photo ? <img src={booking.hotel_photo} className="w-full h-full object-cover" alt="" /> : <CreditCard className="w-6 h-6 text-gray-200" />}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900 leading-tight">{booking.hotel_name}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{booking.city}</p>
+                                    </div>
+                                </div>
+                                <div className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black border border-blue-100 uppercase">
+                                    {1 + (booking.guest_count || 0)} PAX
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <div className="col-span-2 border-b border-gray-200 pb-2 mb-1">
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Responsável</p>
+                                    <p className="text-sm font-bold text-gray-800 uppercase">{booking.responsible_name}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Início</p>
+                                    <p className="text-xs font-bold text-gray-700">{formatDate(booking.start_date)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Fim</p>
+                                    <p className="text-xs font-bold text-gray-700">{formatDate(booking.end_date)}</p>
+                                </div>
+                            </div>
+
+                            <Button onClick={() => handleManage(booking)} className="w-full cursor-pointer shadow-md">
+                                <Settings2 className="w-4 h-4" />
+                                Gerenciar Unidade
+                            </Button>
+                        </div>
+                    ))}
+                </div>
             </div>
+        ) : (
+          <div className="p-20 text-center flex flex-col items-center">
+            <Search className="w-12 h-12 text-gray-100 mb-4" />
+            <p className="text-gray-400 font-medium">Nenhum registro encontrado</p>
+            <button 
+              onClick={() => { setSearchTerm(''); setSearchType('all'); }} 
+              className="mt-4 text-primary text-[10px] font-black uppercase tracking-widest hover:underline cursor-pointer"
+            >
+              Resetar Filtros
+            </button>
+          </div>
         )}
       </div>
     </div>

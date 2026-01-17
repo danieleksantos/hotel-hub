@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Building2, CalendarDays, LogOut, Menu, X, Star } from 'lucide-react';
 
-export const Layout: React.FC = () => {
+export const Sidebar: React.FC = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

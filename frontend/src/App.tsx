@@ -5,9 +5,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Login } from './pages/Login';
-import { Layout } from './components/Layout';
 import { Hotels } from './pages/Hotels';      
 import { Bookings } from './pages/Bookings'; 
+import { Sidebar } from './components/Sidebar'
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { signed } = useAuth();
@@ -25,7 +25,7 @@ function App() {
             path="/dashboard" 
             element={
               <PrivateRoute>
-                <Layout />
+                <Sidebar />
               </PrivateRoute>
             } 
           >

@@ -155,13 +155,6 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({ isOpen, onCl
             <Trash2 className="w-4 h-4 mr-2" /> Excluir Hotel
           </button>
           <div className="flex items-center gap-4">
-            <button 
-              type="button" 
-              onClick={onClose} 
-              className="px-6 py-3 rounded-lg border border-gray-300 bg-white text-gray-600 text-sm font-bold uppercase tracking-wider hover:text-red-500 transition-all cursor-pointer outline-none shadow-sm"
-            >
-              Voltar
-            </button>
             <Button 
               type="submit" 
               form="manage-hotel-form" 

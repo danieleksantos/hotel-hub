@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { X, Calendar, Trash2, Users, Plus, CreditCard } from 'lucide-react';
+import { X, Calendar, Trash2, Users, Plus, CreditCard, Save } from 'lucide-react';
 import api from '../services/api';
 import { Button } from './Button';
 import { toast } from 'react-toastify';
@@ -57,6 +57,7 @@ export const ManageBookingModal: React.FC<ManageBookingModalProps> = ({
       await api.put(`/bookings/${booking.id}`, { hotel_id: booking.hotel_id, ...editData });
       toast.success('Reserva atualizada!');
       onUpdate();
+      onClose(); // Fecha após salvar para fluidez
     } catch (error) {
       console.error("Update Error", error);
       toast.error('Erro ao atualizar.');
@@ -76,9 +77,10 @@ export const ManageBookingModal: React.FC<ManageBookingModalProps> = ({
       cancelButtonText: 'Manter reserva',
       reverseButtons: true,
       customClass: {
-        popup: 'rounded-xl shadow-2xl border-none',
-        confirmButton: 'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer mx-2 bg-red-500 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400',
-        cancelButton: 'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer mx-2 bg-green-600 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400'
+        popup: 'rounded-xl shadow-2xl border-none p-4', 
+        actions: 'flex flex-col md:flex-row gap-3 mt-4 w-full justify-center',
+        confirmButton: 'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer w-full md:w-auto bg-red-500 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400',
+        cancelButton: 'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer w-full md:w-auto bg-green-600 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400'
       }
     });
 
@@ -116,64 +118,122 @@ export const ManageBookingModal: React.FC<ManageBookingModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-      <div className="relative bg-white w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
-          <div>
-             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2"><CreditCard className="w-5 h-5 text-primary" /> Gerenciar Reserva</h2>
-             <p className="text-sm text-gray-500">{booking.hotel_name} • {booking.city}</p>
+      <div className="relative bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
+        
+        {/* HEADER */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-xl">
+              <CreditCard className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 leading-tight">Gerenciar Reserva</h2>
+              <p className="text-sm text-gray-500">{booking.hotel_name} • {booking.city}</p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"><X className="w-6 h-6" /></button>
+          <button 
+            onClick={onClose} 
+            className="p-2 rounded-full bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer border border-gray-100"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <section className="space-y-4">
-               <h3 className="font-bold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2"><Calendar className="w-4 h-4" /> Dados da Estadia</h3>
-               <form onSubmit={handleUpdateBooking} className="space-y-4">
+        {/* BODY - SCROLLABLE */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            
+            {/* FORMULÁRIO (ESQUERDA) */}
+            <div className="space-y-6">
+               <h3 className="font-bold text-gray-700 border-b pb-3 flex items-center gap-2">
+                 <Calendar className="w-5 h-5 text-primary" />
+                 Dados da Estadia
+               </h3>
+               
+               <form id="edit-booking-form" onSubmit={handleUpdateBooking} className="space-y-5">
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Responsável</label>
-                    <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={editData.responsible_name} onChange={e => setEditData({...editData, responsible_name: e.target.value})} />
+                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Responsável pela Reserva</label>
+                    <input type="text" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={editData.responsible_name} onChange={e => setEditData({...editData, responsible_name: e.target.value})} />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div><label className="block text-xs font-bold text-gray-500 uppercase mb-1">Check-in</label><input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={editData.start_date} onChange={e => setEditData({...editData, start_date: e.target.value})} /></div>
-                    <div><label className="block text-xs font-bold text-gray-500 uppercase mb-1">Check-out</label><input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={editData.end_date} onChange={e => setEditData({...editData, end_date: e.target.value})} /></div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Check-in</label>
+                      <input type="date" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={editData.start_date} onChange={e => setEditData({...editData, start_date: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Check-out</label>
+                      <input type="date" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={editData.end_date} onChange={e => setEditData({...editData, end_date: e.target.value})} />
+                    </div>
                   </div>
-                  <Button type="submit" disabled={loading} className="w-full cursor-pointer">{loading ? 'Salvando...' : 'Atualizar Dados'}</Button>
                </form>
+            </div>
 
-               <div className="pt-8 mt-8 border-t border-gray-100">
-                  <h3 className="font-bold text-red-600 border-b border-red-100 pb-2 mb-4 flex items-center gap-2"><Trash2 className="w-4 h-4" /> Zona de Perigo</h3>
-                  <button onClick={handleDeleteBooking} className="w-full border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">Cancelar Reserva permanentemente</button>
-               </div>
-            </section>
+            {/* HÓSPEDES (DIREITA) */}
+            <div className="flex flex-col bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                <h3 className="font-bold text-gray-700 border-b border-gray-200 pb-3 mb-6 flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-primary" />
+                      Hóspedes
+                    </span>
+                    <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full">{guests.length}</span>
+                </h3>
 
-            <section className="bg-gray-50 p-5 rounded-xl border border-gray-100 h-fit">
-                <h3 className="font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4 flex items-center gap-2"><Users className="w-4 h-4" /> Hóspedes Acompanhantes</h3>
-                <div className="space-y-2 mb-6 max-h-[200px] overflow-y-auto pr-1">
-                    {guests.length === 0 && <p className="text-sm text-gray-400 text-center py-4 italic">Nenhum hóspede adicional.</p>}
-                    {guests.map(guest => (
-                        <div key={guest.id} className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center">
-                            <div><p className="font-bold text-sm text-gray-800">{guest.name}</p><p className="text-xs text-gray-500">{guest.document}</p></div>
-                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                        </div>
-                    ))}
+                <div className="space-y-3 mb-6 flex-1 overflow-y-auto min-h-[120px] max-h-[220px] pr-2 custom-scrollbar">
+                    {guests.length === 0 ? (
+                        <p className="text-sm italic text-gray-400 text-center py-4">Nenhum acompanhante.</p>
+                    ) : (
+                      guests.map(guest => (
+                          <div key={guest.id} className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center">
+                              <div>
+                                  <p className="font-bold text-sm text-gray-800">{guest.name}</p>
+                                  <p className="text-[10px] text-gray-500 font-mono">{guest.document}</p>
+                              </div>
+                              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                          </div>
+                      ))
+                    )}
                 </div>
-                <form onSubmit={handleAddGuest} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <h4 className="text-xs font-bold text-primary uppercase mb-3 flex items-center gap-1"><Plus className="w-3 h-3" /> Adicionar Hóspede</h4>
+
+                <form onSubmit={handleAddGuest} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <div className="space-y-3">
-                        <input required type="text" placeholder="Nome" className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md outline-none focus:border-primary transition-colors" value={newGuest.name} onChange={e => setNewGuest({...newGuest, name: e.target.value})} />
+                        <input required type="text" placeholder="Nome do acompanhante" className="w-full px-3 py-2 text-sm border border-gray-100 rounded-lg outline-none focus:border-primary bg-gray-50 focus:bg-white transition-all" value={newGuest.name} onChange={e => setNewGuest({...newGuest, name: e.target.value})} />
                         <div className="flex gap-2">
-                            <input required type="text" placeholder="Documento" className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md outline-none focus:border-primary transition-colors" value={newGuest.document} onChange={e => setNewGuest({...newGuest, document: e.target.value})} />
-                            <button type="submit" disabled={loadingGuest} className="bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-md font-bold transition-colors disabled:opacity-50 cursor-pointer"><Plus className="w-4 h-4" /></button>
+                            <input required type="text" placeholder="Documento" className="w-full px-3 py-2 text-sm border border-gray-100 rounded-lg outline-none focus:border-primary bg-gray-50 focus:bg-white transition-all" value={newGuest.document} onChange={e => setNewGuest({...newGuest, document: e.target.value})} />
+                            <button type="submit" disabled={loadingGuest} className="bg-secondary text-primary hover:bg-primary hover:text-white px-3 rounded-lg font-bold transition-all cursor-pointer">
+                                <Plus className="w-5 h-5" />
+                            </button>
                         </div>
                     </div>
                 </form>
-            </section>
+            </div>
           </div>
         </div>
-        <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
-            <button onClick={onClose} className="px-6 py-2 border border-gray-300 rounded-lg bg-white text-gray-600 text-xs font-bold uppercase tracking-wider hover:text-red-500 transition-all cursor-pointer">Fechar</button>
+
+        {/* FOOTER FIXO - Ações principais aqui */}
+        <div className="p-6 border-t border-gray-100 bg-white flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+          <button 
+            type="button" 
+            onClick={handleDeleteBooking} 
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 text-sm font-bold uppercase tracking-wider transition-all cursor-pointer order-2 md:order-1"
+          >
+            <Trash2 className="w-4 h-4" />
+            Cancelar Reserva
+          </button>
+
+          <div className="flex items-center gap-4 w-full md:w-auto order-1 md:order-2">
+            <Button 
+              type="submit" 
+              form="edit-booking-form" 
+              disabled={loading}
+              className="w-full md:min-w-[180px] cursor-pointer"
+            >
+              {loading ? 'Salvando...' : 'Salvar Alterações'}
+              {!loading && <Save className="w-4 h-4 ml-2" />}
+            </Button>
+          </div>
         </div>
+
       </div>
     </div>
   );
