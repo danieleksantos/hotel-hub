@@ -1,25 +1,23 @@
 import { Router } from 'express';
+import { validate } from './middlewares/validateResource';
+import { authMiddleware } from './middlewares/authMiddleware';
+import { loginSchema } from './schemas/auth.schema';
+import { createHotelSchema } from './schemas/hotel.schema';
+import { createBookingSchema } from './schemas/booking.schema';
+import { createGuestSchema, getGuestSchema } from './schemas/guest.schema';
 import { login } from './controllers/authController';
 import { createHotel, listHotels } from './controllers/hotelController';
 import { createBooking, listAllBookings } from './controllers/bookingController';
-import { addGuest, listGuestsByBooking } from './controllers/guestController'; 
-import { authMiddleware } from './middlewares/authMiddleware';
+import { addGuest, listGuestsByBooking } from './controllers/guestController';
 
 const router = Router();
 
-// --- AUTH ---
-router.post('/login', login);
-
-// --- HOTÉIS ---
-router.post('/hotels', authMiddleware, createHotel);
+router.post('/login', validate(loginSchema), login);
+router.post('/hotels', authMiddleware, validate(createHotelSchema), createHotel);
 router.get('/hotels', authMiddleware, listHotels);
-
-// --- RESERVAS ---
-router.post('/bookings', authMiddleware, createBooking);
+router.post('/bookings', authMiddleware, validate(createBookingSchema), createBooking);
 router.get('/bookings', authMiddleware, listAllBookings);
-
-// --- HÓSPEDES  ---
-router.post('/guests', authMiddleware, addGuest);
-router.get('/bookings/:bookingId/guests', authMiddleware, listGuestsByBooking);
+router.post('/guests', authMiddleware, validate(createGuestSchema), addGuest);
+router.get('/bookings/:bookingId/guests', authMiddleware, validate(getGuestSchema), listGuestsByBooking);
 
 export default router;

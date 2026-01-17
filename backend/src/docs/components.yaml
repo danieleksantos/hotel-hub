@@ -1,0 +1,54 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Hotel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Hotel Fasano
+        city:
+          type: string
+          example: São Paulo
+        stars:
+          type: integer
+          example: 5
+        total_rooms:
+          type: integer
+          example: 50
+    
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        responsible_name:
+          type: string
+
+    Guest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Maria Silva
+        document:
+          type: string
+          example: 123.456.789-00

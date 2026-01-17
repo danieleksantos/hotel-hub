@@ -1,0 +1,50 @@
+paths:
+  /guests:
+    post:
+      summary: Adiciona hóspede
+      tags: [Guests]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bookingId, name, document]
+              properties:
+                bookingId:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                document:
+                  type: string
+      responses:
+        201:
+          description: Adicionado
+        404:
+          description: Reserva não encontrada
+
+  /bookings/{bookingId}/guests:
+    get:
+      summary: Lista hóspedes da reserva
+      tags: [Guests]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bookingId
+          schema:
+            type: string
+          required: true
+          description: ID da Reserva
+      responses:
+        200:
+          description: Lista retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guest'

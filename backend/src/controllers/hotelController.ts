@@ -1,37 +1,24 @@
-import { Request, Response } from 'express';
-import { pool } from '../database/db';
+import { RequestHandler } from 'express';
+import { HotelService } from '../services/hotelService';
 
-export const createHotel = async (req: Request, res: Response) => {
+const hotelService = new HotelService();
+
+export const createHotel: RequestHandler = async (req, res, next): Promise<void> => {
   try {
-    const { name, city, address, stars, description, total_rooms, photo_url } = req.body;
+    const hotelData = req.body;
+    const hotel = await hotelService.createHotel(hotelData);
 
-    if (!name || !city || !address || !stars || !total_rooms) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    const query = `
-      INSERT INTO hotels (name, city, address, stars, description, total_rooms, photo_url)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-    `;
-    
-    const values = [name, city, address, stars, description, total_rooms, photo_url || null];
-    
-    const result = await pool.query(query, values);
-    return res.status(201).json(result.rows[0]);
-
+    res.status(201).json(hotel);
   } catch (error) {
-    console.error('Error creating hotel:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
-export const listHotels = async (req: Request, res: Response) => {
+export const listHotels: RequestHandler = async (req, res, next): Promise<void> => {
   try {
-    const result = await pool.query('SELECT * FROM hotels ORDER BY created_at DESC');
-    return res.json(result.rows);
+    const hotels = await hotelService.listHotels();
+    res.json(hotels);
   } catch (error) {
-    console.error('Error listing hotels:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };

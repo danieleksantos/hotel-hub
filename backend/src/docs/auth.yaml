@@ -1,0 +1,45 @@
+paths:
+  /login:
+    post:
+      summary: Realiza login
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: 123456
+      responses:
+        200:
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        401:
+          description: Credenciais inválidas
+        500:
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: string
+                    example: error
+                  message: 
+                    type: string

@@ -13,21 +13,32 @@ export const authMiddleware = (
   res: Response, 
   next: NextFunction
 ) => {
-  const { authorization } = req.headers;
+  const authHeader = req.headers.authorization;
 
-  if (!authorization) {
-    return res.status(401).json({ error: 'Token not provided' });
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Token não fornecido' });
   }
 
-  const [, token] = authorization.split(' ');
+  const parts = authHeader.split(' ');
+
+  if (parts.length !== 2) {
+    return res.status(401).json({ error: 'Erro no Token' });
+  }
+
+  const [scheme, token] = parts;
+
+  if (!/^Bearer$/i.test(scheme)) {
+    return res.status(401).json({ error: 'Token malformatado' });
+  }
 
   try {
-    const secret = process.env.JWT_SECRET || 'default_secret';
-    const decoded = jwt.verify(token, secret);
-    (req as any).userId = (decoded as TokenPayload).id;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const { id, username } = decoded as TokenPayload;
+    
+    req.user = { id, username };
 
     return next();
-  } catch (error) {
-    return res.status(401).json({ error: 'Invalid or expired token' });
+  } catch (err) {
+    return res.status(401).json({ error: 'Token inválido' });
   }
 };
