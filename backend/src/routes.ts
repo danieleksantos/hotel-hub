@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { validate } from './middlewares/validateResource';
 import { authMiddleware } from './middlewares/authMiddleware';
-
 import { loginSchema } from './schemas/auth.schema';
 import { createHotelSchema, hotelIdSchema } from './schemas/hotel.schema';
 import { 
@@ -9,7 +8,12 @@ import {
   updateBookingSchema, 
   bookingIdSchema 
 } from './schemas/booking.schema';
-import { createGuestSchema, getGuestSchema } from './schemas/guest.schema';
+import { 
+  createGuestSchema, 
+  getGuestSchema, 
+  updateGuestSchema, 
+  guestIdSchema 
+} from './schemas/guest.schema';
 
 import { login } from './controllers/authController';
 import { 
@@ -24,7 +28,12 @@ import {
   updateBooking, 
   deleteBooking 
 } from './controllers/bookingController';
-import { addGuest, listGuestsByBooking } from './controllers/guestController';
+import { 
+  addGuest, 
+  listGuestsByBooking, 
+  updateGuest, 
+  removeGuest 
+} from './controllers/guestController';
 
 const router = Router();
 
@@ -46,5 +55,7 @@ router.delete('/bookings/:id', authMiddleware, validate(bookingIdSchema), delete
 // --- GUESTS ---
 router.post('/guests', authMiddleware, validate(createGuestSchema), addGuest);
 router.get('/bookings/:booking_id/guests', authMiddleware, validate(getGuestSchema), listGuestsByBooking);
+router.put('/guests/:id', authMiddleware, validate(updateGuestSchema), updateGuest);
+router.delete('/guests/:id', authMiddleware, validate(guestIdSchema), removeGuest);
 
 export default router;

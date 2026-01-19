@@ -5,14 +5,7 @@ import { Button } from '../components/Button'
 import { SearchBar, type SearchType } from '../components/SearchBar'
 import { CreateBookingModal } from '../components/CreateBookingModal'
 import { ManageBookingModal } from '../components/ManageBookingModal'
-import {
-  Plus,
-  Users,
-  Settings2,
-  MapPin,
-  CreditCard,
-  Search,
-} from 'lucide-react'
+import { Plus, Users, Settings2, MapPin, Search } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { Booking, ApiError } from '../types'
 
@@ -124,6 +117,7 @@ export const Bookings: React.FC = () => {
           </div>
         ) : filteredBookings.length > 0 ? (
           <div>
+            {/* VIEW DESKTOP */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 text-gray-400 font-black uppercase tracking-widest text-[10px] border-b border-gray-100">
@@ -143,7 +137,9 @@ export const Bookings: React.FC = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
+                          <div
+                            className={`w-10 h-10 rounded-lg overflow-hidden shrink-0 flex items-center justify-center shadow-inner border ${!booking.hotel_photo ? 'bg-primary border-transparent' : 'bg-gray-50 border-gray-100'}`}
+                          >
                             {booking.hotel_photo ? (
                               <img
                                 src={booking.hotel_photo}
@@ -151,7 +147,11 @@ export const Bookings: React.FC = () => {
                                 alt=""
                               />
                             ) : (
-                              <CreditCard className="w-5 h-5 text-gray-200" />
+                              <img
+                                src="/build.png"
+                                className="w-6 h-6 object-contain"
+                                alt="Hotel Hub Placeholder"
+                              />
                             )}
                           </div>
                           <div>
@@ -200,67 +200,83 @@ export const Bookings: React.FC = () => {
               </table>
             </div>
 
-            <div className="md:hidden divide-y divide-gray-100">
-              {filteredBookings.map((booking) => (
-                <div key={booking.id} className="p-4 flex flex-col gap-4">
+            {/* VIEW MOBILE */}
+            <div className="md:hidden">
+              {filteredBookings.map((booking, index) => (
+                <div
+                  key={booking.id}
+                  className={`p-6 flex flex-col gap-5 ${
+                    index !== filteredBookings.length - 1
+                      ? 'border-b border-gray-100'
+                      : ''
+                  }`}
+                >
                   <div className="flex items-start justify-between">
-                    <div className="flex gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center">
+                    <div className="flex gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border overflow-hidden ${!booking.hotel_photo ? 'bg-primary border-transparent' : 'bg-gray-50 border-gray-100'}`}
+                      >
                         {booking.hotel_photo ? (
                           <img
                             src={booking.hotel_photo}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-xl"
                             alt=""
                           />
                         ) : (
-                          <CreditCard className="w-6 h-6 text-gray-200" />
+                          <img
+                            src="/logo-icon.png"
+                            className="w-7 h-7 object-contain"
+                            alt="Hotel Hub Placeholder"
+                          />
                         )}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 leading-tight">
+                        <p className="font-bold text-gray-900 text-lg leading-tight">
                           {booking.hotel_name}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
                           {booking.city}
                         </p>
                       </div>
                     </div>
-                    <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 border border-blue-100">
+                    <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-black flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {1 + (booking.guest_count || 0)}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-                    <div className="col-span-2 border-b border-gray-200 pb-2 mb-1">
-                      <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">
-                        Responsável
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+                      Responsável
+                    </p>
+                    <p className="text-sm font-bold text-gray-700 uppercase">
+                      {booking.responsible_name}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest">
+                        Estadia
                       </p>
-                      <p className="text-sm font-bold text-gray-800 uppercase">
-                        {booking.responsible_name}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">
-                        Entrada
-                      </p>
-                      <p className="text-xs font-bold text-gray-700">
-                        {formatDate(booking.start_date)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">
-                        Saída
-                      </p>
-                      <p className="text-xs font-bold text-gray-700">
+                      <p className="text-xs font-bold text-gray-600">
+                        {formatDate(booking.start_date)} —{' '}
                         {formatDate(booking.end_date)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest text-right">
+                        Duração
+                      </p>
+                      <p className="text-xs font-black text-primary uppercase">
+                        {getDays(booking.start_date, booking.end_date)} Noites
                       </p>
                     </div>
                   </div>
 
                   <Button
                     onClick={() => handleManage(booking)}
-                    className="w-full cursor-pointer shadow-md active:scale-95 transition-transform"
+                    className="w-full py-3.5 shadow-none border border-primary/20 bg-white !text-primary hover:bg-primary hover:!text-white"
                   >
                     <Settings2 className="w-4 h-4" />
                     Gerenciar Reserva

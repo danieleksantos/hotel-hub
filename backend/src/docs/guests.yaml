@@ -1,8 +1,8 @@
-# --- ROTAS DE GUESTS ---
+paths:
   /guests:
     post:
       summary: Adiciona hóspede a uma reserva
-      description: Vincula um novo hóspede a uma reserva existente.
+      description: Vincula um novo acompanhante a uma reserva existente.
       tags: [Guests]
       security:
         - bearerAuth: []
@@ -24,19 +24,20 @@
                   example: "Maria Souza"
                 document:
                   type: string
-                  description: "CPF, RG ou Passaporte"
+                  description: "Número do documento (CPF/RG/Passaporte)"
                   example: "123.456.789-00"
       responses:
         201:
           description: Hóspede adicionado com sucesso
         400:
-          description: Dados inválidos
+          description: Erro de validação nos campos enviados
         404:
-          description: Reserva não encontrada
+          description: Reserva (booking_id) não encontrada
 
   /bookings/{booking_id}/guests:
     get:
       summary: Lista hóspedes da reserva
+      description: Retorna todos os acompanhantes associados a uma reserva específica.
       tags: [Guests]
       security:
         - bearerAuth: []
@@ -50,10 +51,70 @@
           description: ID da Reserva para buscar os acompanhantes
       responses:
         200:
-          description: Lista retornada com sucesso
+          description: Lista de acompanhantes retornada com sucesso
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Guest'
+        404:
+          description: Reserva não encontrada
+
+  /guests/{id}:
+    put:
+      summary: Atualiza dados do hóspede
+      description: Altera informações de um acompanhante específico através do seu ID único.
+      tags: [Guests]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID único do hóspede (gerado pelo banco)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "Novo nome completo"
+                  example: "Maria Souza Silva"
+                document:
+                  type: string
+                  description: "Novo número de documento"
+                  example: "987.654.321-00"
+      responses:
+        200:
+          description: Hóspede atualizado com sucesso
+        400:
+          description: ID inválido ou dados de corpo incorretos
+        404:
+          description: Hóspede não encontrado no sistema
+
+    delete:
+      summary: Remove um hóspede
+      description: Exclui permanentemente o registro de um acompanhante.
+      tags: [Guests]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID único do hóspede a ser removido
+      responses:
+        200:
+          description: Hóspede removido com sucesso
+        404:
+          description: Hóspede não encontrado

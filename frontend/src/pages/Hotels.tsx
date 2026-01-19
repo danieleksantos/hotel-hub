@@ -7,9 +7,6 @@ import { Plus, MapPin, Star, BedDouble, Settings2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { Hotel } from '../types'
 
-const DEFAULT_IMAGE =
-  'https://placehold.co/600x400/0f5132/FFF?text=Hotel+Hub&font=montserrat'
-
 export const Hotels: React.FC = () => {
   const [hotels, setHotels] = useState<Hotel[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,12 +37,6 @@ export const Hotels: React.FC = () => {
     setIsManageModalOpen(true)
   }
 
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>,
-  ) => {
-    e.currentTarget.src = DEFAULT_IMAGE
-  }
-
   return (
     <div>
       <CreateHotelModal
@@ -68,7 +59,7 @@ export const Hotels: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-primary">Nossos Hotéis</h1>
           <p className="text-gray-500 mt-1">
-            Gerencie a rede de hotéis cadastrada
+            Gerenciamento hotéis da rede Hotel Hub
           </p>
         </div>
         <Button onClick={() => setIsCreateModalOpen(true)}>
@@ -88,15 +79,25 @@ export const Hotels: React.FC = () => {
               key={hotel.id}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden border border-gray-100 group flex flex-col h-full"
             >
-              <div className="h-56 bg-gray-200 relative overflow-hidden">
-                <img
-                  src={hotel.photo_url || DEFAULT_IMAGE}
-                  alt={hotel.name}
-                  onError={handleImageError}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+              <div
+                className={`h-56 relative overflow-hidden flex items-center justify-center ${!hotel.photo_url ? 'bg-primary' : 'bg-gray-200'}`}
+              >
+                {hotel.photo_url ? (
+                  <img
+                    src={hotel.photo_url}
+                    alt={hotel.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                ) : (
+                  <img
+                    src="/logo-hotel-hub.png"
+                    className="w-34 h-34 object-contain opacity-90 transition-transform group-hover:scale-110 duration-700"
+                    alt="Hotel Hub"
+                  />
+                )}
+
                 <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2 py-1 rounded-md shadow-sm flex items-center gap-1 z-10">
-                  <span className="font-bold text-primary text-xs uppercase">
+                  <span className="font-bold text-primary text-xs uppercase text-[10px] tracking-tighter">
                     {hotel.total_rooms} Quartos
                   </span>
                   <BedDouble className="w-3 h-3 text-secondary" />
@@ -127,7 +128,10 @@ export const Hotels: React.FC = () => {
                 </p>
 
                 <div className="pt-4 border-t border-gray-100 mt-auto">
-                  <Button onClick={() => handleManageClick(hotel)} className="">
+                  <Button
+                    onClick={() => handleManageClick(hotel)}
+                    className="w-full"
+                  >
                     <Settings2 className="w-4 h-4 mr-2" />
                     Gerenciar Unidade
                   </Button>

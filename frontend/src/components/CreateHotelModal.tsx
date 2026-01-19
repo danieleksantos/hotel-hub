@@ -81,7 +81,7 @@ export const CreateHotelModal: React.FC<CreateHotelModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer outline-none"
+            className="p-2 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm border border-gray-100 transition-all cursor-pointer outline-none active:scale-90"
           >
             <X className="w-6 h-6" />
           </button>

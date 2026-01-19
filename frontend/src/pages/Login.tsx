@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { LogIn, Lock, User, Star } from 'lucide-react'
+import { LogIn, Lock, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/Button'
 
@@ -22,23 +22,13 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
-        <div className="bg-primary p-8 text-center relative">
-          <div className="absolute top-4 right-4 flex gap-1 bg-black/10 p-1.5 rounded-full px-3 backdrop-blur-sm">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className="w-3 h-3 text-secondary"
-                fill="currentColor"
-              />
-            ))}
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-wide mt-2">
-            HOTEL HUB
-          </h1>
-          <p className="text-primary-light text-sm font-light uppercase tracking-widest opacity-90">
-            Premium Management
-          </p>
+      <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden ">
+        <div className="bg-primary p-4 flex items-center justify-center p-4 relative">
+          <img
+            src="/logo-hotel-hub.png"
+            alt="Hotel Hub Logo"
+            className="h-26 md:h-16 lg:h-30 w-auto object-contain transition-transform hover:scale-105"
+          />
         </div>
 
         <div className="p-8 pt-10">

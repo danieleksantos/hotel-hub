@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Building2, CalendarDays, LogOut, Menu, X, Star } from 'lucide-react'
+import { Building2, CalendarDays, LogOut, Menu, X } from 'lucide-react'
 
 export const Sidebar: React.FC = () => {
   const { signOut, user } = useAuth()
@@ -46,29 +46,17 @@ export const Sidebar: React.FC = () => {
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
       >
-        <div className="p-8 border-b border-primary-hover flex items-center justify-between bg-primary-hover/20">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-extrabold tracking-wider text-white">
-              HOTEL HUB
-            </h1>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-widest text-primary-light opacity-70">
-                Premium
-              </span>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
-                    key={s}
-                    className="w-2 h-2 text-secondary"
-                    fill="currentColor"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="relative p-2 md:p-6 border-b border-primary-hover flex items-center justify-center bg-primary-hover/20">
+          <img
+            src="/logo-hotel-hub.png"
+            alt="Hotel Hub Logo"
+            className="h-16 md:h-16 lg:h-30 w-auto object-contain transition-transform hover:scale-105"
+          />
+
           <button
             onClick={closeSidebar}
-            className="md:hidden text-primary-light hover:text-white cursor-pointer"
+            className="absolute right-4 md:hidden text-white hover:text-white cursor-pointer p-1 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="Fechar menu"
           >
             <X className="w-6 h-6" />
           </button>

@@ -3,11 +3,8 @@ import { X, Save, Building2, Trash2 } from 'lucide-react'
 import api from '../services/api'
 import { Button } from './Button'
 import { toast } from 'react-toastify'
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
+import { alertService } from '../services/sweetAlert'
 import type { Hotel, HotelFormData } from '../types'
-
-const MySwal = withReactContent(Swal)
 
 interface ManageHotelModalProps {
   isOpen: boolean
@@ -47,13 +44,11 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
     }
   }, [isOpen, hotel])
 
-  if (!isOpen || !hotel) return null
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      await api.put(`/hotels/${hotel.id}`, formData)
+      await api.put(`/hotels/${hotel?.id}`, formData)
       toast.success('Hotel atualizado com sucesso!')
       onUpdate()
       onClose()
@@ -66,33 +61,12 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
   }
 
   const handleDelete = async () => {
-    const result = await MySwal.fire({
-      title: (
-        <p className="text-2xl font-bold text-gray-800 uppercase tracking-tighter">
-          Remover Hotel?
-        </p>
-      ),
-      html: (
-        <div className="text-gray-600 font-medium">
-          Esta ação é irreversível. Ao excluir o <b>{hotel.name}</b>, todas as
-          reservas e hóspedes vinculados serão apagados permanentemente.
-        </div>
-      ),
-      icon: 'warning',
-      showCancelButton: true,
-      buttonsStyling: false,
-      confirmButtonText: 'Sim, excluir tudo',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: true,
-      customClass: {
-        popup: 'rounded-2xl shadow-2xl border-none p-6',
-        actions: 'flex gap-3 mt-8 w-full justify-center px-4',
-        confirmButton:
-          'flex-2 py-3 px-6 rounded-xl font-black uppercase text-[12px] tracking-widest bg-red-500 text-white hover:bg-red-600 hover:shadow-lg transition-all cursor-pointer outline-none',
-        cancelButton:
-          'flex-1 py-3 px-6 rounded-xl font-black uppercase text-[12px] tracking-widest bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer outline-none',
-      },
-    })
+    if (!hotel) return
+
+    const result = await alertService.destructive(
+      'Remover Hotel?',
+      `Esta ação é irreversível. Ao excluir o <b>${hotel.name}</b>, todas as reservas e hóspedes vinculados serão apagados permanentemente.`,
+    )
 
     if (result.isConfirmed) {
       try {
@@ -107,6 +81,8 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
     }
   }
 
+  if (!isOpen || !hotel) return null
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -114,17 +90,17 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
         onClick={onClose}
       ></div>
 
-      <div className="relative bg-white w-full max-w-2xl rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200 border border-gray-100">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
+      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200 border border-gray-100">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50 sticky top-0 z-10 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg">
+            <div className="bg-primary/10 p-2 rounded-xl">
               <Building2 className="w-6 h-6 text-primary" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800 leading-tight">
                 Gerenciar Unidade
               </h2>
-              <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
                 Edição de Informações
               </p>
             </div>
@@ -132,52 +108,54 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm border border-gray-100 transition-all cursor-pointer outline-none"
+            className="p-2 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm border border-gray-100 transition-all cursor-pointer outline-none active:scale-90"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 md:p-8">
           <form
             id="manage-hotel-form"
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <div className="md:col-span-2">
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Nome do Hotel *
               </label>
               <input
                 required
                 type="text"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-gray-700 transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-gray-700 transition-all"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
               />
             </div>
+
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Cidade *
               </label>
               <input
                 required
                 type="text"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
                 value={formData.city}
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
               />
             </div>
+
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Classificação *
               </label>
               <select
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white outline-none cursor-pointer font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white outline-none cursor-pointer font-medium text-gray-600"
                 value={formData.stars}
                 onChange={(e) =>
                   setFormData({ ...formData, stars: Number(e.target.value) })
@@ -190,28 +168,30 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
                 ))}
               </select>
             </div>
+
             <div className="md:col-span-2">
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Endereço Completo *
               </label>
               <input
                 required
                 type="text"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
                 value={formData.address}
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
               />
             </div>
+
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Total de Quartos *
               </label>
               <input
                 required
                 type="number"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
                 value={formData.total_rooms}
                 onChange={(e) =>
                   setFormData({
@@ -221,26 +201,28 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
                 }
               />
             </div>
+
             <div className="md:col-span-2">
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 URL da Foto
               </label>
               <input
                 type="url"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
                 value={formData.photo_url || ''}
                 onChange={(e) =>
                   setFormData({ ...formData, photo_url: e.target.value })
                 }
               />
             </div>
+
             <div className="md:col-span-2 pb-4">
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">
                 Descrição
               </label>
               <textarea
                 rows={3}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none font-medium text-gray-600"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none font-medium text-gray-600"
                 value={formData.description || ''}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
@@ -249,14 +231,13 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
             </div>
           </form>
 
-          <div className="pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
             <button
               type="button"
               onClick={handleDelete}
-              className=" w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl 
-                         text-red-500 bg-red-50 border border-red-100 text-[12px] font-black 
-                         uppercase tracking-widest hover:bg-red-500 hover:text-white 
-                         transition-all duration-300 cursor-pointer outline-none order-2 md:order-1 active:scale-95"
+              className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl 
+                         text-red-500 bg-red-50 border border-red-100 text-[12px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 cursor-pointer 
+                         outline-none order-2 md:order-1 active:scale-95"
             >
               <Trash2 className="w-4 h-4" /> Excluir Unidade
             </button>
@@ -266,7 +247,7 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
                 type="submit"
                 form="manage-hotel-form"
                 disabled={loading}
-                className="w-full md:min-w-[200px] shadow-lg active:scale-95 transition-all"
+                className="w-full md:min-w-[220px] shadow-lg"
               >
                 {loading ? 'Salvando...' : 'Salvar Alterações'}
                 {!loading && <Save className="w-4 h-4 ml-2" />}
