@@ -1,19 +1,24 @@
-import React from 'react';
-import { Search, ChevronDown } from 'lucide-react';
+import React from 'react'
+import { Search, ChevronDown } from 'lucide-react'
 
-export type SearchType = 'all' | 'hotel' | 'guest';
+export type SearchType = 'all' | 'hotel' | 'guest'
 
 interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-  searchType: SearchType;
-  onTypeChange: (type: SearchType) => void;
-  placeholder?: string;
-  count?: number;
+  value: string
+  onChange: (value: string) => void
+  searchType: SearchType
+  onTypeChange: (type: SearchType) => void
+  placeholder?: string
+  count?: number
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ 
-  value, onChange, searchType, onTypeChange, placeholder, count 
+export const SearchBar: React.FC<SearchBarProps> = ({
+  value,
+  onChange,
+  searchType,
+  onTypeChange,
+  placeholder,
+  count,
 }) => {
   return (
     <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-col md:flex-row items-center gap-4">
@@ -48,5 +53,5 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

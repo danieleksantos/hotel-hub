@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Building2, Trash2 } from 'lucide-react';
-import api from '../services/api';
-import { Button } from './Button';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import type { Hotel, HotelFormData } from '../types';
+import React, { useState, useEffect } from 'react'
+import { X, Save, Building2, Trash2 } from 'lucide-react'
+import api from '../services/api'
+import { Button } from './Button'
+import { toast } from 'react-toastify'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import type { Hotel, HotelFormData } from '../types'
 
-const MySwal = withReactContent(Swal);
+const MySwal = withReactContent(Swal)
 
 interface ManageHotelModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onUpdate: () => void;
-  hotel: Hotel | null;
+  isOpen: boolean
+  onClose: () => void
+  onUpdate: () => void
+  hotel: Hotel | null
 }
 
-export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({ isOpen, onClose, onUpdate, hotel }) => {
-  const [loading, setLoading] = useState(false);
+export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({
+  isOpen,
+  onClose,
+  onUpdate,
+  hotel,
+}) => {
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<HotelFormData>({
     name: '',
     city: '',
@@ -25,8 +30,8 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({ isOpen, onCl
     stars: 3,
     total_rooms: 10,
     description: '',
-    photo_url: ''
-  });
+    photo_url: '',
+  })
 
   useEffect(() => {
     if (isOpen && hotel) {
@@ -37,35 +42,40 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({ isOpen, onCl
         stars: hotel.stars || 3,
         total_rooms: hotel.total_rooms || 10,
         description: hotel.description || '',
-        photo_url: hotel.photo_url || ''
-      });
+        photo_url: hotel.photo_url || '',
+      })
     }
-  }, [isOpen, hotel]);
+  }, [isOpen, hotel])
 
-  if (!isOpen || !hotel) return null;
+  if (!isOpen || !hotel) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     try {
-      await api.put(`/hotels/${hotel.id}`, formData);
-      toast.success('Hotel atualizado com sucesso!');
-      onUpdate();
-      onClose();
+      await api.put(`/hotels/${hotel.id}`, formData)
+      toast.success('Hotel atualizado com sucesso!')
+      onUpdate()
+      onClose()
     } catch (error) {
-      console.error('Update Error:', error);
-      toast.error('Erro ao atualizar hotel.');
+      console.error('Update Error:', error)
+      toast.error('Erro ao atualizar hotel.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDelete = async () => {
     const result = await MySwal.fire({
-      title: <p className="text-2xl font-bold text-gray-800">Remover Hotel?</p>,
+      title: (
+        <p className="text-2xl font-bold text-gray-800 uppercase tracking-tighter">
+          Remover Hotel?
+        </p>
+      ),
       html: (
-        <div className="text-gray-600">
-          Esta ação é irreversível. Ao excluir o <b>{hotel.name}</b>, todas as reservas e hóspedes vinculados serão apagados.
+        <div className="text-gray-600 font-medium">
+          Esta ação é irreversível. Ao excluir o <b>{hotel.name}</b>, todas as
+          reservas e hóspedes vinculados serão apagados permanentemente.
         </div>
       ),
       icon: 'warning',
@@ -75,98 +85,196 @@ export const ManageHotelModal: React.FC<ManageHotelModalProps> = ({ isOpen, onCl
       cancelButtonText: 'Cancelar',
       reverseButtons: true,
       customClass: {
-        popup: 'rounded-xl shadow-2xl border-none',
-        confirmButton: 'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer mx-2 bg-red-500 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400',
-        cancelButton:  'flex items-center justify-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer mx-2 bg-green-600 text-white border border-transparent hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400'
-      }
-    });
+        popup: 'rounded-2xl shadow-2xl border-none p-6',
+        actions: 'flex gap-3 mt-8 w-full justify-center px-4',
+        confirmButton:
+          'flex-2 py-3 px-6 rounded-xl font-black uppercase text-[12px] tracking-widest bg-red-500 text-white hover:bg-red-600 hover:shadow-lg transition-all cursor-pointer outline-none',
+        cancelButton:
+          'flex-1 py-3 px-6 rounded-xl font-black uppercase text-[12px] tracking-widest bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all cursor-pointer outline-none',
+      },
+    })
 
     if (result.isConfirmed) {
       try {
-        await api.delete(`/hotels/${hotel.id}`);
-        toast.success('Hotel removido com sucesso!');
-        onUpdate();
-        onClose();
+        await api.delete(`/hotels/${hotel.id}`)
+        toast.success('Hotel removido com sucesso!')
+        onUpdate()
+        onClose()
       } catch (error) {
-        console.error('Delete Error:', error);
-        toast.error('Erro ao excluir hotel.');
+        console.error('Delete Error:', error)
+        toast.error('Erro ao excluir hotel.')
       }
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-      <div className="relative bg-white w-full max-w-2xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      ></div>
+
+      <div className="relative bg-white w-full max-w-2xl rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200 border border-gray-100">
         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg"><Building2 className="w-6 h-6 text-primary" /></div>
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <Building2 className="w-6 h-6 text-primary" />
+            </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">Gerenciar Unidade</h2>
-              <p className="text-sm text-gray-500">Edite as informações ou remova o hotel</p>
+              <h2 className="text-xl font-bold text-gray-800 leading-tight">
+                Gerenciar Unidade
+              </h2>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                Edição de Informações
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer outline-none">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-full bg-white text-gray-400 hover:text-red-500 shadow-sm border border-gray-100 transition-all cursor-pointer outline-none"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto">
-          <form id="manage-hotel-form" onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6">
+          <form
+            id="manage-hotel-form"
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do Hotel *</label>
-              <input required type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Nome do Hotel *
+              </label>
+              <input
+                required
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-gray-700 transition-all"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cidade *</label>
-              <input required type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} />
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Cidade *
+              </label>
+              <input
+                required
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                value={formData.city}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Classificação *</label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white outline-none cursor-pointer" value={formData.stars} onChange={e => setFormData({...formData, stars: Number(e.target.value)})}>
-                {[1,2,3,4,5].map(s => <option key={s} value={s}>{s} Estrelas</option>)}
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Classificação *
+              </label>
+              <select
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-white outline-none cursor-pointer font-medium text-gray-600"
+                value={formData.stars}
+                onChange={(e) =>
+                  setFormData({ ...formData, stars: Number(e.target.value) })
+                }
+              >
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <option key={s} value={s}>
+                    {s} Estrelas
+                  </option>
+                ))}
               </select>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Endereço Completo *</label>
-              <input required type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Endereço Completo *
+              </label>
+              <input
+                required
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                value={formData.address}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Total de Quartos *</label>
-              <input required type="number" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={formData.total_rooms} onChange={e => setFormData({...formData, total_rooms: Number(e.target.value)})} />
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Total de Quartos *
+              </label>
+              <input
+                required
+                type="number"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                value={formData.total_rooms}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    total_rooms: Number(e.target.value),
+                  })
+                }
+              />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL da Foto</label>
-              <input type="url" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" value={formData.photo_url || ''} onChange={e => setFormData({...formData, photo_url: e.target.value})} />
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                URL da Foto
+              </label>
+              <input
+                type="url"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-gray-600"
+                value={formData.photo_url || ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, photo_url: e.target.value })
+                }
+              />
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-              <textarea rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none" value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} />
+            <div className="md:col-span-2 pb-4">
+              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 font-sans">
+                Descrição
+              </label>
+              <textarea
+                rows={3}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none font-medium text-gray-600"
+                value={formData.description || ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
             </div>
           </form>
-        </div>
 
-        <div className="p-6 border-t border-gray-100 bg-gray-50 flex items-center justify-between gap-4">
-          <button 
-            type="button" 
-            onClick={handleDelete} 
-            className="flex items-center justify-center px-4 py-3 rounded-lg text-gray-500 text-sm font-bold uppercase tracking-wider hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer outline-none"
-          >
-            <Trash2 className="w-4 h-4 mr-2" /> Excluir Hotel
-          </button>
-          <div className="flex items-center gap-4">
-            <Button 
-              type="submit" 
-              form="manage-hotel-form" 
-              disabled={loading}
-              className="cursor-pointer"
+          <div className="pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className=" w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl 
+                         text-red-500 bg-red-50 border border-red-100 text-[12px] font-black 
+                         uppercase tracking-widest hover:bg-red-500 hover:text-white 
+                         transition-all duration-300 cursor-pointer outline-none order-2 md:order-1 active:scale-95"
             >
-              {loading ? 'Salvando...' : 'Salvar Alterações'}
-              {!loading && <Save className="w-4 h-4 ml-2" />}
-            </Button>
+              <Trash2 className="w-4 h-4" /> Excluir Unidade
+            </button>
+
+            <div className="w-full md:w-auto order-1 md:order-2">
+              <Button
+                type="submit"
+                form="manage-hotel-form"
+                disabled={loading}
+                className="w-full md:min-w-[200px] shadow-lg active:scale-95 transition-all"
+              >
+                {loading ? 'Salvando...' : 'Salvar Alterações'}
+                {!loading && <Save className="w-4 h-4 ml-2" />}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
