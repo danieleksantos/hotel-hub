@@ -59,3 +59,64 @@ paths:
           description: Hotel não encontrado
         409:
           description: Conflito - Não há quartos disponíveis para este período
+
+  /bookings/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID da reserva (UUID)
+        schema:
+          type: string
+          format: uuid
+
+    put:
+      summary: Atualizar reserva existente
+      description: Atualiza os dados da estadia ou o responsável.
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hotel_id:
+                  type: string
+                  format: uuid
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+                responsible_name:
+                  type: string
+              example:
+                hotel_id: "00000000-0000-0000-0000-000000000000"
+                start_date: "2026-03-01"
+                end_date: "2026-03-05"
+                responsible_name: "Carlos Almeida Atualizado"
+      responses:
+        200:
+          description: Reserva atualizada com sucesso
+        404:
+          description: Reserva não encontrada
+        401:
+          description: Não autorizado
+
+    delete:
+      summary: Cancelar/Remover reserva
+      description: Remove a reserva de forma definitiva.
+      tags: [Bookings]
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: Reserva removida com sucesso (No Content)
+        404:
+          description: Reserva não encontrada
+        401:
+          description: Não autorizado

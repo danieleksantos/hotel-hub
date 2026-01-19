@@ -43,4 +43,8 @@ export interface Guest {
     created_at?: string;
 }
 
+export interface ApiError {
+  error: string;
+}
+
 export type HotelFormData = Omit<Hotel, 'id' | 'created_at'>;

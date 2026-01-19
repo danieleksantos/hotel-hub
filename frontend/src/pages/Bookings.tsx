@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
 import api from '../services/api';
 import { Button } from '../components/Button';
 import { SearchBar, type SearchType } from '../components/SearchBar';
@@ -6,7 +7,7 @@ import { CreateBookingModal } from '../components/CreateBookingModal';
 import { ManageBookingModal } from '../components/ManageBookingModal';
 import { Plus, Users, Settings2, MapPin, CreditCard, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
-import type { Booking } from '../types';
+import type { Booking, ApiError } from '../types';
 
 export const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -23,9 +24,11 @@ export const Bookings: React.FC = () => {
     try {
       const response = await api.get<Booking[]>('/bookings');
       setBookings(response.data);
-    } catch (error) {
-      console.error('Error loading bookings:', error);
-      toast.error('Erro ao carregar reservas.');
+    } catch (err) {
+      const error = err as AxiosError<ApiError>;
+      console.error('Erro ao carregar reservas:', error);
+      const msg = error.response?.data?.error || 'Erro ao carregar reservas.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -41,28 +44,24 @@ export const Bookings: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString.includes('T') ? dateString : dateString + 'T00:00:00');
-    return date.toLocaleDateString('pt-BR');
+    const [year, month, day] = dateString.split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
   };
 
   const getDays = (start: string, end: string) => {
-    const d1 = new Date(start).getTime();
-    const d2 = new Date(end).getTime();
-    const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+    const d1 = new Date(start.split('T')[0] + 'T00:00:00');
+    const d2 = new Date(end.split('T')[0] + 'T00:00:00');
+    const diff = Math.ceil((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     return diff > 0 ? diff : 1;
   };
 
-  // Lógica de Filtro Simplificada e Limpa
   const filteredBookings = bookings.filter(b => {
     const term = searchTerm.toLowerCase().trim();
     if (!term) return true;
-
     const matchHotel = b.hotel_name.toLowerCase().includes(term);
     const matchGuest = b.responsible_name.toLowerCase().includes(term);
-
     if (searchType === 'hotel') return matchHotel;
     if (searchType === 'guest') return matchGuest;
-    
     return matchHotel || matchGuest;
   });
 
@@ -81,7 +80,6 @@ export const Bookings: React.FC = () => {
         booking={selectedBooking}
       />
 
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Reservas</h1>
@@ -94,7 +92,6 @@ export const Bookings: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* BUSCA SEPARADA */}
         <SearchBar 
           value={searchTerm} 
           onChange={setSearchTerm}
@@ -107,7 +104,7 @@ export const Bookings: React.FC = () => {
         {loading ? (
           <div className="p-20 flex flex-col items-center justify-center gap-4 text-gray-400">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <p className="text-sm italic font-medium uppercase tracking-widest">Carregando...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">Sincronizando Banco...</p>
           </div>
         ) : filteredBookings.length > 0 ? (
             <div>
@@ -184,29 +181,31 @@ export const Bookings: React.FC = () => {
                                         <p className="text-xs text-gray-500 mt-1">{booking.city}</p>
                                     </div>
                                 </div>
-                                <div className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black border border-blue-100 uppercase">
-                                    {1 + (booking.guest_count || 0)} PAX
+                                {/* AJUSTADO: Agora exibe ícone e número igual ao desktop */}
+                                <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black inline-flex items-center gap-1.5 border border-blue-100">
+                                    <Users className="w-3 h-3" />
+                                    {1 + (booking.guest_count || 0)}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div className="grid grid-cols-2 gap-3 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
                                 <div className="col-span-2 border-b border-gray-200 pb-2 mb-1">
-                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Responsável</p>
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">Responsável</p>
                                     <p className="text-sm font-bold text-gray-800 uppercase">{booking.responsible_name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Início</p>
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">Entrada</p>
                                     <p className="text-xs font-bold text-gray-700">{formatDate(booking.start_date)}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest">Fim</p>
+                                    <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-1">Saída</p>
                                     <p className="text-xs font-bold text-gray-700">{formatDate(booking.end_date)}</p>
                                 </div>
                             </div>
 
-                            <Button onClick={() => handleManage(booking)} className="w-full cursor-pointer shadow-md">
+                            <Button onClick={() => handleManage(booking)} className="w-full cursor-pointer shadow-md active:scale-95 transition-transform">
                                 <Settings2 className="w-4 h-4" />
-                                Gerenciar Unidade
+                                Gerenciar Reserva
                             </Button>
                         </div>
                     ))}
@@ -215,7 +214,7 @@ export const Bookings: React.FC = () => {
         ) : (
           <div className="p-20 text-center flex flex-col items-center">
             <Search className="w-12 h-12 text-gray-100 mb-4" />
-            <p className="text-gray-400 font-medium">Nenhum registro encontrado</p>
+            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Nenhum registro encontrado</p>
             <button 
               onClick={() => { setSearchTerm(''); setSearchType('all'); }} 
               className="mt-4 text-primary text-[10px] font-black uppercase tracking-widest hover:underline cursor-pointer"

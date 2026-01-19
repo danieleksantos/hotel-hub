@@ -1,3 +1,4 @@
+import { listAllBookings } from './../controllers/bookingController';
 import { pool } from '../database/db';
 
 interface CreateBookingDTO {
@@ -41,7 +42,7 @@ export class BookingService {
     return result.rows[0];
   }
 
-  async listAll() {
+  async listAllBookings() {
     const query = `
       SELECT 
           b.id, 
@@ -53,7 +54,6 @@ export class BookingService {
           b.responsible_name, 
           b.created_at,
           u.username as created_by,
-          -- Subquery para contar hóspedes adicionais
           (SELECT COUNT(*) FROM guests g WHERE g.booking_id = b.id)::int as guest_count
       FROM bookings b
       JOIN hotels h ON b.hotel_id = h.id

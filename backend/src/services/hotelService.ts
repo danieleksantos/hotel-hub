@@ -14,7 +14,6 @@ export class HotelService {
   
   async createHotel(data: CreateHotelDTO) {
     const { name, city, address, stars, description, total_rooms, photo_url } = data;
-
     const query = `
       INSERT INTO hotels (name, city, address, stars, description, total_rooms, photo_url)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -22,7 +21,6 @@ export class HotelService {
     `;
     
     const values = [name, city, address, stars, description, total_rooms, photo_url || null];
-  
     const result = await pool.query(query, values);
     return result.rows[0];
   }

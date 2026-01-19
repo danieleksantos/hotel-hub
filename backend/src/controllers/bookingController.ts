@@ -6,7 +6,6 @@ const bookingService = new BookingService();
 export const createBooking: RequestHandler = async (req, res, next): Promise<void> => {
   try {
     const { hotel_id, start_date, end_date, responsible_name } = req.body;
-    
     const user_id = req.user?.id; 
 
     if (!user_id) {
@@ -16,10 +15,10 @@ export const createBooking: RequestHandler = async (req, res, next): Promise<voi
 
     const booking = await bookingService.createBooking({
       user_id,
-      hotel_id: hotel_id, 
-      start_date: start_date,
-      end_date: end_date,
-      responsible_name: responsible_name
+      hotel_id, 
+      start_date,
+      end_date,
+      responsible_name
     });
 
     res.status(201).json({
@@ -42,9 +41,37 @@ export const createBooking: RequestHandler = async (req, res, next): Promise<voi
 
 export const listAllBookings: RequestHandler = async (req, res, next): Promise<void> => {
   try {
-    const bookings = await bookingService.listAll();
+    const bookings = await bookingService.listAllBookings();
     res.json(bookings);
   } catch (error) {
+    next(error);
+  }
+};
+
+export const updateBooking: RequestHandler = async (req, res, next): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const updated = await bookingService.updateBooking(id as string, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.message === 'BOOKING_NOT_FOUND') {
+      res.status(404).json({ error: 'Reserva não encontrada' });
+      return;
+    }
+    next(error);
+  }
+};
+
+export const deleteBooking: RequestHandler = async (req, res, next): Promise<void> => {
+  try {
+    const { id } = req.params;
+    await bookingService.deleteBooking(id as string);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.message === 'BOOKING_NOT_FOUND') {
+      res.status(404).json({ error: 'Reserva não encontrada' });
+      return;
+    }
     next(error);
   }
 };
