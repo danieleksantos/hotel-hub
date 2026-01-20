@@ -12,7 +12,9 @@ services:
       - POSTGRES_DB=hotel_hub
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/database/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - ./backend/database/01-seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
+
     networks:
       - app-network
     healthcheck:

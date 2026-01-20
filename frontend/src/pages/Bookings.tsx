@@ -117,7 +117,6 @@ export const Bookings: React.FC = () => {
           </div>
         ) : filteredBookings.length > 0 ? (
           <div>
-            {/* VIEW DESKTOP */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 text-gray-400 font-black uppercase tracking-widest text-[10px] border-b border-gray-100">
@@ -200,7 +199,6 @@ export const Bookings: React.FC = () => {
               </table>
             </div>
 
-            {/* VIEW MOBILE */}
             <div className="md:hidden">
               {filteredBookings.map((booking, index) => (
                 <div
