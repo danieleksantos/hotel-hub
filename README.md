@@ -45,7 +45,7 @@ O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de i
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/danieleksantos/hotel-hub.git](https://github.com/danieleksantos/hotel-hub.git)
+   git clone https://github.com/danieleksantos/hotel-hub.git
    cd hotel-hub
    ```
 
@@ -146,7 +146,9 @@ npm run dev
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/f7e2a790-16af-4ade-93b4-1eb565034523" alt="Mobile Hotels" width="200" />
 </p>
-
+<br>
+<br>
+<br>
 <div align="center">
 <p>Desenvolvido por <strong>Daniele Karina dos Santos</strong></p>
 </div>
