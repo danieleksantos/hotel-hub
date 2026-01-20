@@ -32,15 +32,16 @@ O **Hotel Hub** é uma plataforma completa para administração de redes hotelei
 
 ---
 
-## Como rodar o projeto (Docker)
+## Como rodar o projeto 
+### Opção 1: Docker
 
 O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de inicialização automática (Seed), o banco de dados nascerá com hotéis reais, reservas e hóspedes.
 
-### Pré-requisitos
+#### Pré-requisitos
 - Docker instalado.
 - Docker Compose instalado.
 
-### Passo a Passo
+#### Passo a Passo
 
 1. **Clone o repositório:**
    ```bash
@@ -58,6 +59,47 @@ O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de i
 - Frontend: http://localhost:8080
 - Backend API: http://localhost:3000
 - Documentação Swagger: http://localhost:3000/api-docs/
+
+### Opção 2: Localmente
+
+Se desejar rodar o projeto sem Docker, siga os passos abaixo:
+
+#### Pré-requisitos
+
+- Node.js (v18+) instalado.
+- PostgreSQL instalado e rodando.
+
+1. **Configurar o Banco de Dados**
+
+- Crie um banco de dados chamado hotel_hub.
+- Execute o conteúdo dos arquivos /backend/database/init.sql e /backend/database/seed.sql (nesta ordem) no seu cliente Postgres para criar as tabelas e dados iniciais.
+
+2. **Configurar o Backend**
+```bash
+cd backend
+npm install
+```
+
+- Crie um arquivo .env na pasta /backend com as seguintes variáveis:
+```bash
+PORT=3000
+DATABASE_URL=postgres://seu_usuario:sua_senha@localhost:5432/hotel_hub
+JWT_SECRET=sua_chave_secreta
+```
+
+- Inicie o servidor:
+```bash
+npm run dev
+```
+
+3. **Configurar o Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+- O frontend estará disponível em http://localhost:5173 (ou a porta indicada no terminal).
 
 ## Credenciais de Acesso
 <p>Ao rodar pela primeira vez, o banco é populado automaticamente com um usuário administrador para testes:</p>
@@ -95,7 +137,7 @@ O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de i
 
 <hr />
 
-## Screenshots
+## Preview
 
 <p align="center">
 <img src="https://github.com/user-attachments/assets/76dcfd5f-5eb4-4cf3-aa24-03eab690bd52" alt="Desktop Preview" width="700" /></p>
@@ -104,3 +146,7 @@ O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de i
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/f7e2a790-16af-4ade-93b4-1eb565034523" alt="Mobile Hotels" width="200" />
 </p>
+
+<div align="center">
+<p>Desenvolvido por <strong>Daniele Karina dos Santos</strong></p>
+</div>
