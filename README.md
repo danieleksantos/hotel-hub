@@ -4,7 +4,7 @@
   # Hotel Hub - Sistema de Gestão Hoteleira
 
   <p>
-    <strong>Gestão de estadias, hotéis e hóspedes com foco em UX e portabilidade.</strong>
+    <strong>Gestão de estadias, hotéis e hóspedes com foco em UX, portabilidade e design 100% responsivo.</strong>
   </p>
 
   <p>
@@ -19,13 +19,17 @@
 
 ## Sobre o Projeto
 
-O **Hotel Hub** é uma plataforma completa e 100% responsiva (desketop e mobile) para administração de redes hoteleiras. O sistema permite o cadastro de unidades, gerenciamento de disponibilidade e controle de hóspedes, tudo sob uma interface moderna, responsiva e com identidade visual limpa e intuitiva.
+O Hotel Hub é uma plataforma robusta para administração de redes hoteleiras, desenvolvida para atender às demandas de um ambiente dinâmico. O grande diferencial deste projeto é a sua adaptabilidade total, garantindo uma experiência fluida em qualquer dispositivo:
+
+- Experiência Desktop: Interface otimizada para alta produtividade, com tabelas detalhadas, navegação lateral intuitiva e visualização ampla de dados.
+- Experiência Mobile (Mobile-First): Interface totalmente adaptada para dispositivos móveis, utilizando componentes flexíveis, menus simplificados e áreas de toque (touch targets) otimizadas, permitindo a gestão completa da rede hoteleira diretamente do telemóvel.
+- Identidade Visual Premium: Design moderno com paleta de cores institucional (Verde Escuro e Dourado), focado em legibilidade, contraste e clareza de informações.
 
 
 
 ## Tecnologias Utilizadas
 
-- **Frontend:** React.js, Tailwind CSS, Lucide Icons.
+- **Frontend:** React.js, Tailwind CSS (Design Responsivo), Lucide Icons.
 - **Backend:** Node.js, Express, Querys SQL puras.
 - **Infraestrutura:** Docker & Docker Compose.
 - **Banco de Dados:** PostgreSQL 15.
@@ -139,9 +143,9 @@ npm run dev
 
 ## Preview
 
-<p align="center">
+<p align="center"> Desktop Experience
 <img src="https://github.com/user-attachments/assets/76dcfd5f-5eb4-4cf3-aa24-03eab690bd52" alt="Desktop Preview" width="700" /></p>
-<p align="center">
+<p align="center">Mobile Experience (Responsive Design)
   <img src="https://github.com/user-attachments/assets/8b73efdb-8774-4e3a-8f62-d51ef688f339" alt="Mobile Login" width="200" />
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/f7e2a790-16af-4ade-93b4-1eb565034523" alt="Mobile Hotels" width="200" />
