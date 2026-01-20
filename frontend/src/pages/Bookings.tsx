@@ -222,7 +222,7 @@ export const Bookings: React.FC = () => {
                           />
                         ) : (
                           <img
-                            src="/logo-icon.png"
+                            src="/build.png"
                             className="w-7 h-7 object-contain"
                             alt="Hotel Hub Placeholder"
                           />
@@ -274,7 +274,7 @@ export const Bookings: React.FC = () => {
 
                   <Button
                     onClick={() => handleManage(booking)}
-                    className="w-full py-3.5 shadow-none border border-primary/20 bg-white !text-primary hover:bg-primary hover:!text-white"
+                    className="w-full py-3.5 shadow-none border border-primary/20"
                   >
                     <Settings2 className="w-4 h-4" />
                     Gerenciar Reserva

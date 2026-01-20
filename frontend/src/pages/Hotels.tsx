@@ -59,7 +59,7 @@ export const Hotels: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-primary">Nossos Hotéis</h1>
           <p className="text-gray-500 mt-1">
-            Gerenciamento hotéis da rede Hotel Hub
+            Sistema de gestão hoteleira Hotel Hub
           </p>
         </div>
         <Button onClick={() => setIsCreateModalOpen(true)}>

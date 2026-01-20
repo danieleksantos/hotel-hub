@@ -1,2 +1,29 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #0f5132; 
+    border-radius: 5px;
+    border: 2px solid #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0a3622; 
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #0f5132 #f1f1f1;
+  }
+}
