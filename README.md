@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/3534a77e-fabe-4b4d-bd44-71b44674ef96" alt="Hotel Hub Logo" width="200"/>
+  <img src="https://github.com/user-attachments/assets/3534a77e-fabe-4b4d-bd44-71b44674ef96" alt="Hotel Hub Logo" width="34"/>
 
   # Hotel Hub - Sistema de Gestão Hoteleira
 
