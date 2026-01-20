@@ -19,7 +19,7 @@
 
 ## Sobre o Projeto
 
-O **Hotel Hub** é uma plataforma completa para administração de redes hoteleiras. O sistema permite o cadastro de unidades, gerenciamento de disponibilidade e controle de hóspedes, tudo sob uma interface moderna, responsiva e com identidade visual limpa e intuitiva.
+O **Hotel Hub** é uma plataforma completa e 100% responsiva (desketop e mobile) para administração de redes hoteleiras. O sistema permite o cadastro de unidades, gerenciamento de disponibilidade e controle de hóspedes, tudo sob uma interface moderna, responsiva e com identidade visual limpa e intuitiva.
 
 
 
