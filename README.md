@@ -19,7 +19,7 @@
 
 ## Sobre o Projeto
 
-O **Hotel Hub** é uma plataforma completa para administração de redes hoteleiras. O sistema permite o cadastro de unidades, gerenciamento de disponibilidade e controle de hóspedes, tudo sob uma interface moderna, responsiva e com identidade visual Hotel Hub.
+O **Hotel Hub** é uma plataforma completa para administração de redes hoteleiras. O sistema permite o cadastro de unidades, gerenciamento de disponibilidade e controle de hóspedes, tudo sob uma interface moderna, responsiva e com identidade visual limpa e intuitiva.
 
 
 
@@ -55,9 +55,9 @@ O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de i
 
 3. **Acesse as interfaces:**
 
--Frontend: http://localhost:8080
--Backend API: http://localhost:3000
--Documentação Swagger: http://localhost:3000/api-docs/
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:3000
+- Documentação Swagger: http://localhost:3000/api-docs/
 
 ## Credenciais de Acesso
 <p>Ao rodar pela primeira vez, o banco é populado automaticamente com um usuário administrador para testes:</p>
