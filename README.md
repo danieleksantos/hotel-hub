@@ -142,10 +142,11 @@ npm run dev
 <hr />
 
 ## Preview
-
-<p align="center"> Desktop Experience
+<p align="center">Desktop Experience</p>
+<p align="center"> 
 <img src="https://github.com/user-attachments/assets/76dcfd5f-5eb4-4cf3-aa24-03eab690bd52" alt="Desktop Preview" width="700" /></p>
 <p align="center">Mobile Experience (Responsive Design)
+<p align="center">
   <img src="https://github.com/user-attachments/assets/8b73efdb-8774-4e3a-8f62-d51ef688f339" alt="Mobile Login" width="200" />
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/f7e2a790-16af-4ade-93b4-1eb565034523" alt="Mobile Hotels" width="200" />
