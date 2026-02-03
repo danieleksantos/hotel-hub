@@ -32,7 +32,7 @@ services:
     ports:
       - "3000:3000" 
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=3000
       - DATABASE_URL=postgres://admin:admin@db-hotel-hub:5432/hotel_hub
       - JWT_SECRET=sua_chave_secreta_super_segura
@@ -46,6 +46,8 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3000
     container_name: frontend-hotel-hub
     ports:
       - "8080:80"

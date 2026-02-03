@@ -1,27 +1,31 @@
-import { Pool } from 'pg';
+import { Pool, PoolConfig } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const poolConfig = process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-    }
-    : {
-        user: process.env.POSTGRES_USER || 'admin',
-        host: process.env.POSTGRES_HOST || 'localhost',
-        database: process.env.POSTGRES_DB || 'hotel_hub',
-        password: process.env.POSTGRES_PASSWORD || 'admin',
-        port: parseInt(process.env.POSTGRES_PORT || '5432'),
-    };
+const createConfig = (): PoolConfig => {
+  const isProduction = process.env.NODE_ENV === 'production';
 
-export const pool = new Pool(poolConfig);
+  if (process.env.DATABASE_URL) {
+    return {
+      connectionString: process.env.DATABASE_URL,
+      ssl: isProduction ? { rejectUnauthorized: false } : false,
+    };
+  }
+
+  return {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432'),
+    user: process.env.DB_USER || 'admin',
+    password: process.env.DB_PASS || 'admin',
+    database: process.env.DB_NAME || 'hotel_hub',
+    ssl: false
+  };
+};
+
+export const pool = new Pool(createConfig());
 
 pool.on('connect', () => {
-    console.log('✅ Connected to Database');
-});
-
-pool.on('error', (err) => {
-    console.error('❌ Unexpected error on idle client', err);
-    process.exit(-1);
+    const mode = process.env.DATABASE_URL ? 'Cloud (Neon)' : 'Local (Docker)';
+    console.log(`✅ Database connected - Mode: ${mode}`);
 });
