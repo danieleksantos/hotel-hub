@@ -34,6 +34,7 @@ import {
   updateGuest, 
   removeGuest 
 } from './controllers/guestController';
+import { getHealth } from './controllers/healthController';
 
 const router = Router();
 
@@ -57,5 +58,8 @@ router.post('/guests', authMiddleware, validate(createGuestSchema), addGuest);
 router.get('/bookings/:booking_id/guests', authMiddleware, validate(getGuestSchema), listGuestsByBooking);
 router.put('/guests/:id', authMiddleware, validate(updateGuestSchema), updateGuest);
 router.delete('/guests/:id', authMiddleware, validate(guestIdSchema), removeGuest);
+
+// --- HEALTH ---
+router.get('/health', getHealth);
 
 export default router;
