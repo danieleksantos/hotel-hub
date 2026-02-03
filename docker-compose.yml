@@ -1,41 +1,39 @@
-version: '3.8'
-
 services:
   db-hotel-hub:
     image: postgres:15-alpine
     container_name: db-hotel-hub
+    restart: unless-stopped
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=hotel_hub
+      - POSTGRES_USER=${DB_USER:-admin}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-admin}
+      - POSTGRES_DB=${DB_NAME:-hotel_hub}
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/database/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
-      - ./backend/database/01-seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
-
+      - ./backend/database/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+      - ./backend/database/01-seed.sql:/docker-entrypoint-initdb.d/01-seed.sql:ro
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d hotel_hub"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-hotel_hub}"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
- 
   backend:
     build: 
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend-hotel-hub
+    restart: always
     ports:
       - "3000:3000" 
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - DATABASE_URL=postgres://admin:admin@db-hotel-hub:5432/hotel_hub
-      - JWT_SECRET=sua_chave_secreta_super_segura
+      - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-admin}@db-hotel-hub:5432/${DB_NAME:-hotel_hub}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       db-hotel-hub:
         condition: service_healthy
