@@ -22,7 +22,7 @@ export const authMiddleware = (
   const parts = authHeader.split(' ');
 
   if (parts.length !== 2) {
-    return res.status(401).json({ error: 'Erro no Token' });
+    return res.status(401).json({ error: 'Erro no Token: Formato inválido' });
   }
 
   const [scheme, token] = parts;
@@ -32,13 +32,28 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      console.error("❌ [CRITICAL] JWT_SECRET não definido no ambiente.");
+      return res.status(500).json({ error: 'Erro de configuração no servidor' });
+    }
+
+    const decoded = jwt.verify(token, secret);
+    
     const { id, username } = decoded as TokenPayload;
     
     req.user = { id, username };
 
     return next();
-  } catch (err) {
+
+  } catch (err: any) {
+    console.error(`🔥 [AUTH ERROR] ${err.name}: ${err.message}`);
+
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Sessão expirada. Por favor, faça login novamente.' });
+    }
+
     return res.status(401).json({ error: 'Token inválido' });
   }
 };
