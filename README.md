@@ -7,105 +7,95 @@
     <strong>Gestão de estadias, hotéis e hóspedes com foco em UX, portabilidade e design 100% responsivo.</strong>
   </p>
 
-  <p>
-    <img src="https://img.shields.io/badge/Stack-React.js-blue?style=for-the-badge" alt="React">
-    <img src="https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge" alt="Node">
-    <img src="https://img.shields.io/badge/Database-PostgreSQL-blue?style=for-the-badge" alt="Postgres">
-    <img src="https://img.shields.io/badge/Docker-Ready-lightblue?style=for-the-badge" alt="Docker">
-  </p>
+<p>
+    <img src="https://img.shields.io/badge/React.js-blue?style=for-the-badge" alt="React">
+    <img src="https://img.shields.io/badge/Node.js-green?style=for-the-badge" alt="Node">
+    <img src="https://img.shields.io/badge/Neon_PostgreSQL-00e599?style=for-the-badge&logo=postgresql&logoColor=white" alt="Neon">
+    <img src="https://img.shields.io/badge/Docker-lightblue?style=for-the-badge&logo=docker" alt="Docker">
+</p>
 </div>
+
+---
+## 🚀 Deploy 
+
+O projeto está publicado e pode ser testado nos links abaixo:
+
+- **Frontend (Vercel):** [https://hotel-hub-seven.vercel.app](https://hotel-hub-seven.vercel.app)
+- **Backend API (Render):** [https://hotel-hub-r5r8.onrender.com](https://hotel-hub-r5r8.onrender.com)
+- **Documentação Swagger:** [https://hotel-hub-r5r8.onrender.com/api-docs/](https://hotel-hub-r5r8.onrender.com/api-docs/)
+- **Banco de Dados:** PostgreSQL Gerenciado (Neon Cloud).
+
 
 ---
 
 ## Sobre o Projeto
 
-O Hotel Hub é uma plataforma robusta para administração de redes hoteleiras, desenvolvida para atender às demandas de um ambiente dinâmico. O grande diferencial deste projeto é a sua adaptabilidade total, garantindo uma experiência fluida em qualquer dispositivo:
+O Hotel Hub é uma plataforma robusta para administração de redes hoteleiras, focada em adaptabilidade total e performance.
 
-- Experiência Desktop: Interface otimizada para alta produtividade, com tabelas detalhadas, navegação lateral intuitiva e visualização ampla de dados.
-- Experiência Mobile (Mobile-First): Interface totalmente adaptada para dispositivos móveis, utilizando componentes flexíveis, menus simplificados e áreas de toque (touch targets) otimizadas, permitindo a gestão completa da rede hoteleira diretamente do telemóvel.
-- Identidade Visual Premium: Design moderno com paleta de cores institucional (Verde Escuro e Dourado), focado em legibilidade, contraste e clareza de informações.
-
-
+- **Experiência Desktop:** Alta produtividade com tabelas detalhadas e navegação lateral.
+- **Experiência Mobile (Mobile-First):** Gestão completa da rede hoteleira diretamente do mobile, com touch targets otimizados.
+- **Segurança:** Autenticação via JWT (JSON Web Token) com middlewares de proteção e política de CORS rigorosa.
+- **Identidade Visual Premium:** Design moderno utilizando as cores institucional (Verde Escuro e Dourado).
 
 ## Tecnologias Utilizadas
 
-- **Frontend:** React.js, Tailwind CSS (Design Responsivo), Lucide Icons.
-- **Backend:** Node.js, Express, Querys SQL puras.
-- **Infraestrutura:** Docker & Docker Compose.
-- **Banco de Dados:** PostgreSQL 15.
+- **Frontend:** React.js, Tailwind CSS, Lucide Icons, Axios.
+- **Backend:** Node.js, Express, JWT, Querys SQL puras (foco em performance).
+- **Banco de Dados:** PostgreSQL 15 (Neon Cloud em produção / Docker local).
+- **DevOps:** Docker, Docker Compose, CI/CD via Render e Vercel.
 
 ---
 
 ## Como rodar o projeto 
-### Opção 1: Docker
+### Opção 1: Docker (Recomendado para Desenvolvimento)
 
-O projeto foi configurado para ser **"Plug and Play"**. Graças aos scripts de inicialização automática (Seed), o banco de dados nascerá com hotéis reais, reservas e hóspedes.
+Esta opção sobe o frontend e o backend em containers, enquanto se conecta ao banco de dados configurado no seu `.env`.
+#### 1. Configure as Variáveis de Ambiente
+Crie um arquivo `.env` na **raiz** do projeto:
 
-#### Pré-requisitos
-- Docker instalado.
-- Docker Compose instalado.
+ 
+##### Configurações do Banco (Ex: Neon ou Local)
+```env
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_NAME=hotel_hub
+DATABASE_URL=postgres://user:pass@host:5432/dbname
+```
 
-#### Passo a Passo
+##### Segurança
+```bash
+JWT_SECRET=sua_chave_secreta_aqui
+ALLOWED_ORIGINS=http://localhost:8080,http://localhost:5173,http://localhost:3000
+```
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/danieleksantos/hotel-hub.git
-   cd hotel-hub
-   ```
-
-2. **Suba os containers:**
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Acesse as interfaces:**
+#### 2. Suba os containers
+```bash
+docker-compose up --build
+```
 
 - Frontend: http://localhost:8080
 - Backend API: http://localhost:3000
 - Documentação Swagger: http://localhost:3000/api-docs/
 
-### Opção 2: Localmente
+### Opção 2: Localmente (Manual - Node.js)
 
 Se desejar rodar o projeto sem Docker, siga os passos abaixo:
 
-#### Pré-requisitos
-
-- Node.js (v18+) instalado.
-- PostgreSQL instalado e rodando.
-
-1. **Configurar o Banco de Dados**
-
-- Crie um banco de dados chamado hotel_hub.
-- Execute o conteúdo dos arquivos /backend/database/init.sql e /backend/database/seed.sql (nesta ordem) no seu cliente Postgres para criar as tabelas e dados iniciais.
-
-2. **Configurar o Backend**
+#### 1. **Backend:**
 ```bash
 cd backend
 npm install
-```
-
-- Crie um arquivo .env na pasta /backend com as seguintes variáveis:
-```bash
-PORT=3000
-DATABASE_URL=postgres://seu_usuario:sua_senha@localhost:5432/hotel_hub
-JWT_SECRET=sua_chave_secreta
-```
-
-- Inicie o servidor:
-```bash
 npm run dev
 ```
 
-3. **Configurar o Frontend**
+#### 2. **Frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-- O frontend estará disponível em http://localhost:5173 (ou a porta indicada no terminal).
-
-## Credenciais de Acesso
+## Credenciais de Acesso (teste)
 <p>Ao rodar pela primeira vez, o banco é populado automaticamente com um usuário administrador para testes:</p>
 
 <table>
@@ -127,15 +117,14 @@ npm run dev
 
 <br />
 
-## Estrutura do Banco (Seed)
-<p>O banco de dados utiliza <strong>UUID v4</strong> e está estruturado para garantir a integridade referencial total:</p>
+## Arquitetura e Boas Práticas
 
-<ul>
-  <li><strong>Users:</strong> Controle de autenticação e perfis de acesso.</li>
-  <li><strong>Hotels:</strong> Registro detalhado das unidades (classificação por estrelas, capacidade e fotos).</li>
-  <li><strong>Bookings:</strong> Gerenciamento de períodos de estadia e vínculos entre hotéis e usuários.</li>
-  <li><strong>Guests:</strong> Listagem de hóspedes vinculada diretamente a uma reserva ativa.</li>
-</ul>
+Este projeto foi desenvolvido aplicando fundamentos sólidos de engenharia de software:
+
+- Clean Code: Código legível e de fácil manutenção.
+- SOLID: Princípios de responsabilidade única nos middlewares e serviços.
+- A11y: Preocupação com acessibilidade e feedback visual (Toastify).
+- Estrutura de Dados: Utilização de UUID v4 para IDs e relacionamentos otimizados em SQL puro.
 
 <br />
 
