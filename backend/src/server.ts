@@ -8,6 +8,7 @@ import { pool } from './database/db';
 import routes from './routes';
 
 dotenv.config();
+console.log('🔑 Debug JWT_SECRET:', process.env.JWT_SECRET ? 'Presente' : 'AUSENTE');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
