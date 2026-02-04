@@ -12,20 +12,45 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+const allowedOrigins: string[] = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) 
+  : [];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
 
 app.use(helmet({
-  crossOriginResourcePolicy: false, 
-  contentSecurityPolicy: false,    
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "img-src": ["'self'", "data:", "https://validator.swagger.io"],
+      "script-src": ["'self'", "'unsafe-inline'"],
+      "style-src": ["'self'", "https:", "'unsafe-inline'"],
+    },
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-
-app.use(cors({ origin: '*' }));
-
+app.use(cors(corsOptions));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+  }
+  next();
+});
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -36,25 +61,21 @@ app.get('/', (req, res) => {
 app.use(routes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('🔥 Erro Capturado:', err);
-
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Erro interno do servidor';
-
   res.status(statusCode).json({
     status: 'error',
-    message
+    message: err.message || 'Internal Server Error'
   });
 });
 
 app.listen(PORT, async () => {
   try {
     await pool.query('SELECT 1');
-    console.log(`✅ Database connected successfully`);
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📚 Docs available at http://localhost:${PORT}/api-docs/`);
+    console.log(`✅ Database: Connected (Neon/Postgres)`);
+    console.log(`🔒 CORS: Whitelist -> ${allowedOrigins.join(', ')}`);
+    console.log(`🚀 Server: http://localhost:${PORT}`);
   } catch (error) {
-    console.error('❌ Failed to connect to database:', error);
-
+    console.error('❌ Critical Error during startup:', error);
+    process.exit(1);
   }
 });
