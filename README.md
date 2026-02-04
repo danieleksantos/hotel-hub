@@ -8,7 +8,7 @@
   </p>
 
 <p>
-    <img src="https://img.shields.io/badge/Frontend-React.js-blue?style=for-the-badge" alt="React">
+    <img src="https://img.shields.io/badge/React.js-blue?style=for-the-badge" alt="React">
     <img src="https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge" alt="Node">
     <img src="https://img.shields.io/badge/Cloud_Database-Neon_PostgreSQL-00e599?style=for-the-badge&logo=postgresql&logoColor=white" alt="Neon">
     <img src="https://img.shields.io/badge/Infrastructure-Docker-lightblue?style=for-the-badge&logo=docker" alt="Docker">
