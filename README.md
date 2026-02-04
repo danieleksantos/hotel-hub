@@ -55,7 +55,8 @@ Crie um arquivo `.env` na **raiz** do projeto:
 
  
 ##### Configurações do Banco (Ex: Neon ou Local)
-```env
+```bash
+env
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
 DB_NAME=hotel_hub
