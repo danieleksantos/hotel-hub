@@ -29,12 +29,12 @@ services:
     restart: always
     ports:
       - "3000:3000" 
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
       - PORT=3000
       - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-admin}@db-hotel-hub:5432/${DB_NAME:-hotel_hub}
-      - JWT_SECRET=${JWT_SECRET}
-      - ALLOWED_ORIGINS=http://localhost:8080,http://localhost:5173,http://localhost:3000
     depends_on:
       db-hotel-hub:
         condition: service_healthy
