@@ -52,7 +52,7 @@ Esta opção sobe o frontend e o backend em containers, enquanto se conecta ao b
 Crie um arquivo `.env` na **raiz** do projeto:
 
  
-# Configurações do Banco (Ex: Neon ou Local)
+## Configurações do Banco (Ex: Neon ou Local)
 ```env
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
@@ -60,7 +60,7 @@ DB_NAME=hotel_hub
 DATABASE_URL=postgres://user:pass@host:5432/dbname
 ```
 
-# Segurança
+## Segurança
 ```bash
 JWT_SECRET=sua_chave_secreta_aqui
 ALLOWED_ORIGINS=http://localhost:8080,http://localhost:5173,http://localhost:3000
