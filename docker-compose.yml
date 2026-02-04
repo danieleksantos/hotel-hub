@@ -7,7 +7,7 @@ services:
       - "5433:5432"
     environment:
       - POSTGRES_USER=${DB_USER:-admin}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-admin}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-admin123}
       - POSTGRES_DB=${DB_NAME:-hotel_hub}
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -28,15 +28,14 @@ services:
     container_name: backend-hotel-hub
     restart: always
     ports:
-      - "3000:3000" 
-    volumes:
-      - ./.env:/app/.env
+      - "3000:3000"
     env_file:
       - .env
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-admin}@db-hotel-hub:5432/${DB_NAME:-hotel_hub}
+      - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-admin123}@db-hotel-hub:5432/${DB_NAME:-hotel_hub}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       db-hotel-hub:
         condition: service_healthy
