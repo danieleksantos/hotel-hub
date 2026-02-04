@@ -16,13 +16,15 @@
 </div>
 
 ---
-## 🚀 Deploy (Acesse Agora)
+## 🚀 Deploy 
 
 O projeto está publicado e pode ser testado nos links abaixo:
 
 - **Frontend (Vercel):** [https://hotel-hub-seven.vercel.app](https://hotel-hub-seven.vercel.app)
 - **Backend API (Render):** [https://hotel-hub-r5r8.onrender.com](https://hotel-hub-r5r8.onrender.com)
+- **Documentação Swagger:** [https://hotel-hub-r5r8.onrender.com/api-docs/](https://hotel-hub-r5r8.onrender.com/api-docs/)
 - **Banco de Dados:** PostgreSQL Gerenciado (Neon Cloud).
+
 
 ---
 
