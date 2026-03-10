@@ -1,29 +1,44 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { LogIn, Lock, User } from 'lucide-react'
+import { LogIn, Lock, User, RefreshCw } from 'lucide-react' // Adicionei RefreshCw para o loading
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/Button'
 
 export const Login: React.FC = () => {
   const [username, setUsername] = useState('admin')
   const [password, setPassword] = useState('123456')
+  const [isLoading, setIsLoading] = useState(false) // Estado para o botão
+  const [isApiWakingUp, setIsApiWakingUp] = useState(false) // Estado para o feedback do Render
+
   const { signIn } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+
+    // Se a API não responder em 2 segundos, mostramos o aviso de "Acordando Sistema"
+    const wakeUpTimer = setTimeout(() => {
+      setIsApiWakingUp(true)
+    }, 2000)
+
     try {
       await signIn({ username, password })
       navigate('/dashboard')
     } catch (error) {
       console.error('Erro no login:', error)
+      // Aqui você poderia adicionar um alerta ou toast de erro
+    } finally {
+      clearTimeout(wakeUpTimer)
+      setIsLoading(false)
+      setIsApiWakingUp(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden ">
-        <div className="bg-primary p-4 flex items-center justify-center p-4 relative">
+        <div className="bg-primary p-4 flex items-center justify-center relative">
           <img
             src="/logo-hotel-hub.png"
             alt="Hotel Hub Logo"
@@ -44,8 +59,9 @@ export const Login: React.FC = () => {
                 <input
                   type="text"
                   value={username}
+                  disabled={isLoading}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-gray-700 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-gray-700 outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -61,24 +77,54 @@ export const Login: React.FC = () => {
                 <input
                   type="password"
                   value={password}
+                  disabled={isLoading}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-gray-700 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-gray-700 outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full">
-              <LogIn className="w-5 h-5" />
-              Acessar Sistema
+            <Button
+              type="submit"
+              className="w-full flex justify-center items-center gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <RefreshCw className="w-5 h-5 animate-spin" />
+              ) : (
+                <LogIn className="w-5 h-5" />
+              )}
+              {isLoading ? 'Autenticando...' : 'Acessar Sistema'}
             </Button>
+
+            {/* Alerta de Feedback para o Render (A11y friendly) */}
+            {isApiWakingUp && (
+              <div
+                className="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded flex flex-col gap-1 animate-in fade-in slide-in-from-top-2"
+                role="status"
+                aria-live="polite"
+              >
+                <p className="text-sm font-bold text-amber-800">
+                  Servidor em repouso
+                </p>
+                <p className="text-xs text-amber-700">
+                  Estamos acordando a API no Render. Isso pode levar até 50
+                  segundos no primeiro acesso.
+                </p>
+              </div>
+            )}
           </form>
         </div>
 
         <div className="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center flex justify-between items-center">
           <p className="text-xs text-gray-400">Hotel Hub &copy; 2026</p>
           <div className="flex gap-1 items-center">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <p className="text-xs text-gray-500">System Online</p>
+            <div
+              className={`w-2 h-2 rounded-full ${isApiWakingUp ? 'bg-amber-400 animate-pulse' : 'bg-green-500'}`}
+            ></div>
+            <p className="text-xs text-gray-500">
+              {isApiWakingUp ? 'Awakening API...' : 'System Online'}
+            </p>
           </div>
         </div>
       </div>
